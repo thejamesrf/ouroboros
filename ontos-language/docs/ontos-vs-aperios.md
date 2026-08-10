@@ -18,6 +18,8 @@ Ontos and Aperios are **complementary languages** representing the **left-brain/
 | **Inspiration**     | **Gödel’s Path A** (self-closure under recursion) | **Gödel’s Path B** (ontological openness) |
 | **Risk**            | **Brittleness** (loses specificity at scale) | **Incoherence** (loses structure at scale) |
 | **Strength**        | **Clarity, stability, interoperability**     | **Creativity, depth, vitality**               |
+| **Trade-off**       | **Specificity** (gains precision, loses wholeness) | **Competence** (gains wholeness, loses specificity) |
+| **Reflexivity**     | **None** (avoids self-reference)             | **Paradoxical self-reflexivity** (embodies self-reference) |
 
 ---
 
