@@ -31,6 +31,7 @@ Our first and primary project is **Hidden Gods**, a **Powered by the Apocalypse 
 | Project          | Type               | Description                                                                 | Status       | Path               |
 |------------------|--------------------|-----------------------------------------------------------------------------|--------------|--------------------|
 | **Hidden Gods**  | PbtA TTRPG         | Core tabletop game about nested simulations.                              | 🟡 Active     | [`/hidden-gods`](hidden-gods/) |
+| **Ontos Language** | Conlang          | A logical, non-contradictory language for left-brain thought and precision. | 🟡 Active     | [`/ontos-language`](ontos-language/) |
 | **Anomaly Forge**| Python Tool        | Generates anomalies, archetypes, and layers for Hidden Gods.              | 🟢 Planned   | `/src`             |
 | **Simulation Bible** | Lore/Markdown  | Shared world-building bible for nested layers, gods, and rules.           | 🟢 Planned   | [`/docs`](docs/)   |
 | **Ouroboros CLI**| Python CLI         | Command-line tool for generating and managing simulation assets.          | 🔴 Idea      | *(Future)*         |
