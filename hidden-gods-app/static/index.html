@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden Gods Game App</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .navigator {
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .error {
+            color: #e74c3c;
+        }
+        .success {
+            color: #27ae60;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>✨ Hidden Gods Game App</h1>
+    <p style="text-align: center;">A digital assistant for the Hidden Gods TTRPG</p>
+
+    <!-- Dice Roller -->
+    <div class="section">
+        <h2>🎲 Dice Roller</h2>
+        <div class="form-group">
+            <label for="roll-stat">Stat (optional):</label>
+            <select id="roll-stat">
+                <option value="">None</option>
+                <option value="Cool">Cool</option>
+                <option value="Hard">Hard</option>
+                <option value="Hot">Hot</option>
+                <option value="Sharp">Sharp</option>
+                <option value="Weird">Weird</option>
+                <option value="Hx">Hx</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="roll-value">Stat Value (optional):</label>
+            <input type="number" id="roll-value" placeholder="0" min="-3" max="3" value="0">
+        </div>
+        <div class="button-group">
+            <button onclick="rollDice()">Roll Dice</button>
+        </div>
+        <div id="roll-result" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Move Resolver -->
+    <div class="section">
+        <h2>🎯 Move Resolver</h2>
+        <div class="form-group">
+            <label for="move-name">Move Name:</label>
+            <select id="move-name">
+                <option value="Act Under Pressure">Act Under Pressure</option>
+                <option value="Open Your Brain">Open Your Brain</option>
+                <option value="Hack the Code">Hack the Code</option>
+                <option value="Layer Hop">Layer Hop</option>
+                <option value="Negotiate with a God">Negotiate with a God</option>
+                <option value="Go Aggro">Go Aggro</option>
+                <option value="Seduce or Manipulate">Seduce or Manipulate</option>
+                <option value="Read a Situation">Read a Situation</option>
+                <option value="Read a Person">Read a Person</option>
+                <option value="Help or Interfere">Help or Interfere</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="move-character">Character Name:</label>
+            <input type="text" id="move-character" placeholder="Player" value="Player">
+        </div>
+        <div class="form-group">
+            <label for="move-stat">Stat:</label>
+            <select id="move-stat">
+                <option value="Cool">Cool</option>
+                <option value="Hard">Hard</option>
+                <option value="Hot">Hot</option>
+                <option value="Sharp">Sharp</option>
+                <option value="Weird">Weird</option>
+                <option value="Hx">Hx</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="move-value">Stat Value:</label>
+            <input type="number" id="move-value" placeholder="0" min="-3" max="3" value="0">
+        </div>
+        <div class="button-group">
+            <button onclick="resolveMove()">Resolve Move</button>
+        </div>
+        <div id="move-result" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Anomaly Generator -->
+    <div class="section">
+        <h2>⚠️ Anomaly Generator</h2>
+        <div class="form-group">
+            <label for="anomaly-layer">Layer (optional):</label>
+            <select id="anomaly-layer">
+                <option value="">Any Layer</option>
+                <option value="Base Reality">Base Reality</option>
+                <option value="Debug">Debug</option>
+                <option value="Dream">Dream</option>
+                <option value="Machine">Machine</option>
+                <option value="Void">Void</option>
+            </select>
+        </div>
+        <div class="button-group">
+            <button onclick="generateAnomaly()">Generate Anomaly</button>
+        </div>
+        <div id="anomaly-result" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Layer Generator -->
+    <div class="section">
+        <h2>🌍 Layer Generator</h2>
+        <div class="button-group">
+            <button onclick="generateLayer()">Generate Layer</button>
+        </div>
+        <div id="layer-result" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Navigator -->
+    <div class="section">
+        <h2>🤖 The Navigator</h2>
+        <div class="form-group">
+            <label for="navigator-message">Message:</label>
+            <input type="text" id="navigator-message" placeholder="What do you see?">
+        </div>
+        <div class="button-group">
+            <button onclick="navigatorSpeak()">Speak</button>
+            <button onclick="navigatorOntos()">Speak in Ontos</button>
+        </div>
+        <div id="navigator-result" class="result navigator" style="display: none;"></div>
+    </div>
+
+    <!-- Session Management -->
+    <div class="section">
+        <h2>📜 Session Management</h2>
+        <div class="form-group">
+            <label for="session-title">Session Title:</label>
+            <input type="text" id="session-title" placeholder="The Echoing Door">
+        </div>
+        <div class="form-group">
+            <label for="session-characters">Characters (comma-separated):</label>
+            <input type="text" id="session-characters" placeholder="The Creator, The Sage">
+        </div>
+        <div class="form-group">
+            <label for="session-layer">Starting Layer:</label>
+            <select id="session-layer">
+                <option value="Base Reality">Base Reality</option>
+                <option value="Debug">Debug</option>
+                <option value="Dream">Dream</option>
+                <option value="Machine">Machine</option>
+                <option value="Void">Void</option>
+            </select>
+        </div>
+        <div class="button-group">
+            <button onclick="startSession()">Start Session</button>
+            <button onclick="endSession()">End Session</button>
+            <button onclick="sessionInfo()">Session Info</button>
+        </div>
+        <div id="session-result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + "/api";
+
+        // Helper function to make API requests
+        async function apiRequest(endpoint, method = "GET", data = null) {
+            const url = `${API_BASE}${endpoint}`;
+            const options = {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            };
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            try {
+                const response = await fetch(url, options);
+                return await response.json();
+            } catch (error) {
+                console.error("API Error:", error);
+                return { error: "Failed to connect to the server." };
+            }
+        }
+
+        // Dice Roller
+        async function rollDice() {
+            const stat = document.getElementById("roll-stat").value;
+            const value = document.getElementById("roll-value").value;
+            
+            const params = new URLSearchParams();
+            if (stat) params.append("stat", stat);
+            if (value) params.append("value", value);
+            
+            const result = await apiRequest(`/roll?${params.toString()}`);
+            
+            const resultDiv = document.getElementById("roll-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                const statStr = stat ? `+${stat}${value !== "0" ? value : ""}` : `+${value}`;
+                resultDiv.innerHTML = `
+                    <strong>Rolled:</strong> ${result.dice[0]} + ${result.dice[1]}${statStr} = 
+                    <strong>${result.final_value}</strong> (${result.outcome})
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Move Resolver
+        async function resolveMove() {
+            const moveName = document.getElementById("move-name").value;
+            const character = document.getElementById("move-character").value;
+            const stat = document.getElementById("move-stat").value;
+            const value = document.getElementById("move-value").value;
+            
+            const params = new URLSearchParams();
+            params.append("name", moveName);
+            params.append("character", character);
+            params.append("stat", stat);
+            params.append("value", value);
+            
+            const result = await apiRequest(`/move?${params.toString()}`);
+            
+            const resultDiv = document.getElementById("move-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `<strong>${result.outcome}</strong>`;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Anomaly Generator
+        async function generateAnomaly() {
+            const layer = document.getElementById("anomaly-layer").value;
+            const params = new URLSearchParams();
+            if (layer) params.append("layer", layer);
+            
+            const result = await apiRequest(`/anomaly?${params.toString()}`);
+            
+            const resultDiv = document.getElementById("anomaly-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong>${result.name}</strong> (${result.layer})<br>
+                    <em>${result.manifestation}</em><br>
+                    Clue: ${result.clue}<br>
+                    Purpose: ${result.purpose}<br>
+                    Risk: ${result.risk}<br>
+                    God: ${result.god}
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Layer Generator
+        async function generateLayer() {
+            const result = await apiRequest("/layer");
+            
+            const resultDiv = document.getElementById("layer-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong>${result.name}</strong><br>
+                    Theme: ${result.theme}<br>
+                    Rules: ${result.rules}<br>
+                    God: ${result.god}
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Navigator Speak
+        async function navigatorSpeak() {
+            const message = document.getElementById("navigator-message").value;
+            const params = new URLSearchParams();
+            if (message) params.append("message", message);
+            
+            const result = await apiRequest(`/navigator/speak?${params.toString()}`);
+            
+            const resultDiv = document.getElementById("navigator-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = result.response;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Navigator Ontos
+        async function navigatorOntos() {
+            const message = document.getElementById("navigator-message").value;
+            const params = new URLSearchParams();
+            if (message) params.append("message", message);
+            
+            const result = await apiRequest(`/navigator/ontos?${params.toString()}`);
+            
+            const resultDiv = document.getElementById("navigator-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `<code>${result.response}</code>`;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        // Session Management
+        async function startSession() {
+            const title = document.getElementById("session-title").value;
+            const characters = document.getElementById("session-characters").value.split(",").map(c => c.trim());
+            const layer = document.getElementById("session-layer").value;
+            
+            const result = await apiRequest("/session/start", "POST", {
+                title: title,
+                characters: characters,
+                layer: layer
+            });
+            
+            const resultDiv = document.getElementById("session-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong>Session Started:</strong> ${result.title} (${result.id})<br>
+                    Layer: ${result.current_layer}<br>
+                    Characters: ${result.characters.join(", ")}
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        async function endSession() {
+            const result = await apiRequest("/session/end", "POST");
+            
+            const resultDiv = document.getElementById("session-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong>Session Ended:</strong> ${result.title} (${result.id})<br>
+                    Log Entries: ${result.log_entries}<br>
+                    Anomalies Encountered: ${result.anomalies_encountered}
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+
+        async function sessionInfo() {
+            const result = await apiRequest("/session/info");
+            
+            const resultDiv = document.getElementById("session-result");
+            if (result.error) {
+                resultDiv.innerHTML = `<span class="error">Error: ${result.error}</span>`;
+            } else {
+                resultDiv.innerHTML = `
+                    <strong>Current Session:</strong> ${result.title} (${result.id})<br>
+                    Date: ${result.date}<br>
+                    Layer: ${result.current_layer}<br>
+                    Characters: ${result.characters.join(", ")}<br>
+                    Anomalies: ${result.anomalies_encountered.length}<br>
+                    Log Entries: ${result.log_size}
+                `;
+            }
+            resultDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
