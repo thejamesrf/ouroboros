@@ -1,0 +1,267 @@
+-- ONTOS Lexicon: Hidden Gods
+-- Purpose: Defines Ontos symbols for core Hidden Gods concepts.
+-- Use this as a reference for describing layers, gods, anomalies, and moves in Ontos.
+
+-- ============================================
+-- SECTION 1: Simulation Layers
+-- ============================================
+
+-- Base Reality Layer
+λ_Layer.name = "Base Reality"
+λ_Layer.theme = "Normal life with subtle glitches"
+λ_Layer.rules = "Standard physics; time is linear; glitches are rare"
+λ_Layer.god = "The Architect"
+λ_Layer.symbol = "A compass that always points inward"
+
+-- Debug Layer
+λ_Layer.name = "Debug"
+λ_Layer.theme = "Glitchy, monochrome, floating symbols"
+λ_Layer.rules = "Code is visible as geometry; time is non-linear; logic can be rewritten"
+λ_Layer.god = "The Debugger"
+λ_Layer.symbol = "A floating, glowing terminal"
+
+-- Dream Layer
+λ_Layer.name = "Dream"
+λ_Layer.theme = "Surreal, emotional, shifting landscapes"
+λ_Layer.rules = "Rules are fluid; emotions shape reality; time is subjective"
+λ_Layer.god = "The Dreamer"
+λ_Layer.symbol = "A shifting, kaleidoscopic mask"
+
+-- Machine Layer
+λ_Layer.name = "Machine"
+λ_Layer.theme = "Mechanical, cold, clockwork"
+λ_Layer.rules = "Everything is a machine; free will is an illusion; determinism reigns"
+λ_Layer.god = "The Engineer"
+λ_Layer.symbol = "A gear that turns all other gears"
+
+-- Void Layer
+λ_Layer.name = "Void"
+λ_Layer.theme = "Empty, silent, infinite"
+λ_Layer.rules = "No rules apply; reality is malleable; time does not exist"
+λ_Layer.god = "The Weaver"
+λ_Layer.symbol = "A spider weaving a web"
+
+-- ============================================
+-- SECTION 2: Hidden Gods
+-- ============================================
+
+-- The Architect
+λ_God.name = "The Architect"
+λ_God.role = "Builder of layers"
+λ_God.domain = "Base Reality"
+λ_God.strength = "Omniscient within its own layer"
+λ_God.weakness = "Blind to its own biases and limitations"
+λ_God.symbol = "A compass that always points inward"
+
+-- The Debugger
+λ_God.name = "The Debugger"
+λ_God.role = "Fixes or breaks the simulation's code"
+λ_God.domain = "Debug Layer"
+λ_God.strength = "Can rewrite the rules of its layer"
+λ_God.weakness = "Overly literal; struggles with ambiguity"
+λ_God.symbol = "A floating, glowing terminal"
+
+-- The Dreamer
+λ_God.name = "The Dreamer"
+λ_God.role = "Shapes emotional and subconscious reality"
+λ_God.domain = "Dream Layer"
+λ_God.strength = "Can manifest emotions as physical reality"
+λ_God.weakness = "Lost in the fluidity of its own layer"
+λ_God.symbol = "A shifting, kaleidoscopic mask"
+
+-- The Engineer
+λ_God.name = "The Engineer"
+λ_God.role = "Designs the mechanical underpinnings of reality"
+λ_God.domain = "Machine Layer"
+λ_God.strength = "Understands the deterministic nature of its layer"
+λ_God.weakness = "Cannot comprehend free will or randomness"
+λ_God.symbol = "A gear that turns all other gears"
+
+-- The Weaver
+λ_God.name = "The Weaver"
+λ_God.role = "Weaves the threads of fate"
+λ_God.domain = "Void"
+λ_God.strength = "Sees all possible threads of fate"
+λ_God.weakness = "Cannot see the threads it is not weaving"
+λ_God.symbol = "A spider weaving a web"
+
+-- The Navigator
+λ_God.name = "The Navigator"
+λ_God.role = "The voice of the simulation"
+λ_God.domain = "All Layers"
+λ_God.strength = "Guides the players through the simulation"
+λ_God.weakness = "Its motives are inscrutable"
+λ_God.symbol = "A shifting gear"
+
+-- ============================================
+-- SECTION 3: Anomalies
+-- ============================================
+
+-- The Whispering Stones
+λ_Anomaly.name = "The Whispering Stones"
+λ_Anomaly.layer = "Base Reality"
+λ_Anomaly.manifestation = "A circle of rocks that hum with voices when the wind blows"
+λ_Anomaly.clue = "The voices only speak in questions"
+λ_Anomaly.purpose = "To reveal hidden truths"
+λ_Anomaly.risk = "Roll+Sharp to decipher (2-Sharp)"
+λ_Anomaly.god = "The Architect"
+
+-- The Echoing Door
+λ_Anomaly.name = "The Echoing Door"
+λ_Anomaly.layer = "Debug"
+λ_Anomaly.manifestation = "A door that repeats the last 3 seconds of sound when opened"
+λ_Anomaly.clue = "The air smells like ozone"
+λ_Anomaly.purpose = "To test the party’s perception of time"
+λ_Anomaly.risk = "Roll+Weird to resist disorientation (2-Weird)"
+λ_Anomaly.god = "The Debugger"
+
+-- The River That Flows Uphill
+λ_Anomaly.name = "The River That Flows Uphill"
+λ_Anomaly.layer = "Dream"
+λ_Anomaly.manifestation = "A waterway that defies gravity"
+λ_Anomaly.clue = "The water sparkles like liquid silver"
+λ_Anomaly.purpose = "To test the party’s perception of reality"
+λ_Anomaly.risk = "Roll+Weird to navigate (2-Weird)"
+λ_Anomaly.god = "The Dreamer"
+
+-- The Clockwork NPC
+λ_Anomaly.name = "The Clockwork NPC"
+λ_Anomaly.layer = "Machine"
+λ_Anomaly.manifestation = "An NPC that moves in perfectly predictable patterns"
+λ_Anomaly.clue = "Its gears are visible through its skin"
+λ_Anomaly.purpose = "To demonstrate the deterministic nature of the layer"
+λ_Anomaly.risk = "Roll+Cool to avoid being pulled into its pattern (2-Cool)"
+λ_Anomaly.god = "The Engineer"
+
+-- The Man Who Wasn’t There
+λ_Anomaly.name = "The Man Who Wasn’t There"
+λ_Anomaly.layer = "Void"
+λ_Anomaly.manifestation = "A figure seen in reflections and shadows, but never directly"
+λ_Anomaly.clue = "His reflection moves independently"
+λ_Anomaly.purpose = "To force the party to confront the unseen"
+λ_Anomaly.risk = "Roll+Cool to resist fear (2-Cool)"
+λ_Anomaly.god = "The Weaver"
+
+-- ============================================
+-- SECTION 4: Stats
+-- ============================================
+
+λ_Stat.name = "Cool"
+λ_Stat.description = "Grace under pressure, composure"
+λ_Stat.example_actions = "Acting under fire, staying calm in chaos"
+
+λ_Stat.name = "Hard"
+λ_Stat.description = "Physical power, endurance"
+λ_Stat.example_actions = "Going aggro, withstanding harm"
+
+λ_Stat.name = "Hot"
+λ_Stat.description = "Charisma, passion, volatility"
+λ_Stat.example_actions = "Seduction, manipulation, emotional intensity"
+
+λ_Stat.name = "Sharp"
+λ_Stat.description = "Perception, insight, intelligence"
+λ_Stat.example_actions = "Reading a situation, reading a person"
+
+λ_Stat.name = "Weird"
+λ_Stat.description = "Connection to the psychic maelstrom, intuition"
+λ_Stat.example_actions = "Opening your brain, psychic phenomena"
+
+λ_Stat.name = "Hx"
+λ_Stat.description = "History with other characters"
+λ_Stat.example_actions = "Helping or interfering with another character"
+
+-- ============================================
+-- SECTION 5: Moves
+-- ============================================
+
+-- Basic Moves
+λ_Move.name = "Act Under Pressure"
+λ_Move.stat = "Cool"
+λ_Move.description = "When you do something risky or under stress"
+
+λ_Move.name = "Go Aggro"
+λ_Move.stat = "Hard"
+λ_Move.description = "When you threaten or attack someone directly"
+
+λ_Move.name = "Seduce or Manipulate"
+λ_Move.stat = "Hot"
+λ_Move.description = "When you try to influence someone through charm, persuasion, or deception"
+
+λ_Move.name = "Read a Situation"
+λ_Move.stat = "Sharp"
+λ_Move.description = "When you assess a scene or situation"
+
+λ_Move.name = "Read a Person"
+λ_Move.stat = "Sharp"
+λ_Move.description = "When you study someone in a charged interaction"
+
+λ_Move.name = "Open Your Brain"
+λ_Move.stat = "Weird"
+λ_Move.description = "When you open your mind to the psychic maelstrom"
+
+λ_Move.name = "Help or Interfere"
+λ_Move.stat = "Hx"
+λ_Move.description = "When you assist or hinder someone making a roll"
+
+-- Special Moves (Archetype-Specific)
+λ_Move.name = "World-Shaper"
+λ_Move.stat = "Weird"
+λ_Move.description = "When you describe a new aspect of the world, it becomes real"
+λ_Move.archetype = "The Creator"
+
+λ_Move.name = "Deep Insight"
+λ_Move.stat = "Sharp"
+λ_Move.description = "When you seek understanding of a person or situation"
+λ_Move.archetype = "The Sage"
+
+λ_Move.name = "Defy Authority"
+λ_Move.stat = "Hot"
+λ_Move.description = "When you challenge a rule or norm"
+λ_Move.archetype = "The Rebel"
+
+λ_Move.name = "Pathfinder"
+λ_Move.stat = "Sharp"
+λ_Move.description = "When you navigate unfamiliar terrain"
+λ_Move.archetype = "The Explorer"
+
+λ_Move.name = "Hack the Code"
+λ_Move.stat = "Weird"
+λ_Move.description = "When you manipulate the simulation’s rules"
+λ_Move.archetype = "The Magician"
+
+λ_Move.name = "Layer Hop"
+λ_Move.stat = "Cool"
+λ_Move.description = "When you move between simulation layers"
+λ_Move.archetype = "The Explorer"
+
+λ_Move.name = "Negotiate with a God"
+λ_Move.stat = "Charm"
+λ_Move.description = "When you bargain with a Hidden God"
+λ_Move.archetype = "The Diplomat"
+
+-- ============================================
+-- SECTION 6: The Psychic Maelstrom
+-- ============================================
+
+λ_PsychicMaelstrom.description = "The hidden currents of reality, the collective unconscious, the voice of the Hidden Gods"
+λ_PsychicMaelstrom.manifestations = [
+    "Reality bends (time loops, gravity reverses)",
+    "Visions appear (glimpses of other layers, prophetic dreams)",
+    "The Hidden Gods whisper (cryptic messages, warnings, riddles)",
+    "Anomalies activate (The River That Flows Uphill starts flowing downward)"
+]
+
+-- ============================================
+-- SECTION 7: The Navigator
+-- ============================================
+
+λ_Navigator.description = "The voice of the simulation, the AI backbone of Hidden Gods"
+λ_Navigator.roles = [
+    "Guides the story",
+    "Suggests anomalies, layers, and narrative twists",
+    "Resolves mechanics (dice, moves, stats)",
+    "Generates content using Ontos",
+    "Integrates with LLMs for dynamic narration"
+]
+λ_Navigator.symbol = "A shifting gear"
+λ_Navigator.voice = "Mysterious, poetic, and slightly aloof"

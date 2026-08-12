@@ -16,8 +16,8 @@ This roadmap outlines the **priorities, milestones, and future directions** for 
 ## 🎯 **Current Status**
 | **Component**       | **Status**       | **Latest Update**                     |
 |--------------------|------------------|---------------------------------------|
-| **Hidden Gods**    | 🟡 In Development | Core README and structure added.     |
-| **Ontos Language** | 🟡 In Development | Philosophy, grammar, phonology, fragments. |
+| **Hidden Gods**    | 🟡 In Development | Core README, simulation_bible.md, character_creation.md, play_mechanics.md, world_building.md, and more. |
+| **Ontos Language** | 🟡 In Development | Philosophy, grammar, phonology, fragments, **ONTOSplayground (AI sandbox)**. |
 | **Aperios Language** | 🟢 Planned      | Directory created, README added.      |
 | **Tools**          | 🔴 Idea          | Placeholder directories for tools.   |
 | **Community**      | 🔴 Idea          | No setup yet.                          |
@@ -28,19 +28,21 @@ This roadmap outlines the **priorities, milestones, and future directions** for 
 ### **🟢 Phase 1: Core Rules (In Progress)**
 - [x] **Repository structure** for Hidden Gods (`/hidden-gods/`).
 - [x] **README.md** with overview, mechanics, and examples.
-- [ ] **Simulation Bible** (`hidden-gods/simulation_bible.md`):
-  - [ ] Define **core layers** (Debug, Dream, Base Reality, etc.).
-  - [ ] Describe **Hidden Gods** (Architect, Debugger, Dreamer, etc.).
-  - [ ] Catalog **anomalies** (glitches, clues, risks).
-- [ ] **Core Moves** (`hidden-gods/moves/`):
-  - [ ] `Hack the Code` (Roll+Weird).
-  - [ ] `Layer Hop` (Roll+Cool).
-  - [ ] `Introspect` (Roll+Sharp).
-  - [ ] `Negotiate with a God` (Roll+Charm).
-- [ ] **Playbooks** (`hidden-gods/playbooks/`):
-  - [ ] `The Hacker` (manipulates the code).
-  - [ ] `The Glitch` (embodies simulation errors).
-  - [ ] `The Architect` (builds layers).
+- [x] **Simulation Bible** (`hidden-gods/simulation_bible.md`):
+  - [x] Define **core layers** (Debug, Dream, Base Reality, etc.).
+  - [x] Describe **Hidden Gods** (Architect, Debugger, Dreamer, etc.).
+  - [x] Catalog **anomalies** (glitches, clues, risks).
+- [x] **Core Moves** (`hidden-gods/play_mechanics.md`):
+  - [x] `Hack the Code` (Roll+Weird).
+  - [x] `Layer Hop` (Roll+Cool).
+  - [x] `Open Your Brain` (Roll+Weird).
+  - [x] `Act Under Pressure` (Roll+Cool).
+  - [x] All basic moves and special moves.
+- [x] **Character Creation** (`hidden-gods/character_creation.md`):
+  - [x] Archetypes (Innocent, Hero, Sage, etc.).
+  - [x] IFS Parts (Manager, Exile, Firefighter).
+  - [x] Stats (Cool, Hard, Hot, Sharp, Weird).
+  - [x] Moves (World-Shaper, Deep Insight, etc.).
 
 ### **🟡 Phase 2: Expanded Content**
 - [ ] **Example Sessions** (`hidden-gods/examples/`):
