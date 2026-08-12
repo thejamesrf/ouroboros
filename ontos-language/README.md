@@ -1,7 +1,7 @@
 # Ontos Language
 > <span style="background-color: #2196F3; color: white; padding: 2px 6px; border-radius: 4px;">🔵 Logic</span>
 > <span style="background-color: #FF9800; color: white; padding: 2px 6px; border-radius: 4px;">🟠 Precision</span>
-> *A constructed language (conlang) for left-brain thought: specificity, non-contradiction, and the pursuit of completeness in the face of Gödelian incompleteness.*
+> *A constructed language (conlang) for left-brain thought: specificity, non-contradiction, and while it pursues completeness in the face of Gödelian incompleteness, it prioritizes consistency over completeness while absolutely avoiding inconsistent or paradoxical reasoning.*
 
 ---
 
