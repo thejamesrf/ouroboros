@@ -1,0 +1,170 @@
+-- ONTOS Examples: Hidden Gods
+-- Purpose: Demonstrates how Ontos can describe simulation layers, gods, and anomalies.
+-- Rules: Non-contradictory, specific, and aligned with Hidden Gods lore.
+
+-- ============================================
+-- SECTION 1: Simulation Layers
+-- ============================================
+
+-- Base Reality Layer
+λ_Layer.name = "Base Reality"
+λ_Layer.theme = "Normal life with subtle glitches"
+λ_Layer.rules = "Standard physics; time is linear; glitches are rare"
+λ_Layer.god = "The Architect"
+λ_Layer.god.description = "Builds and maintains the simulation layers"
+
+-- Debug Layer
+λ_Layer.name = "Debug"
+λ_Layer.theme = "Glitchy, monochrome, floating symbols"
+λ_Layer.rules = "Code is visible as geometry; time is non-linear; logic can be rewritten"
+λ_Layer.god = "The Debugger"
+λ_Layer.god.description = "Fixes or breaks the simulation's code"
+
+-- Dream Layer
+λ_Layer.name = "Dream"
+λ_Layer.theme = "Surreal, emotional, shifting landscapes"
+λ_Layer.rules = "Rules are fluid; emotions shape reality; time is subjective"
+λ_Layer.god = "The Dreamer"
+λ_Layer.god.description = "Shapes emotional and subconscious reality"
+
+-- Machine Layer
+λ_Layer.name = "Machine"
+λ_Layer.theme = "Mechanical, cold, clockwork"
+λ_Layer.rules = "Everything is a machine; free will is an illusion; determinism reigns"
+λ_Layer.god = "The Engineer"
+λ_Layer.god.description = "Designs the mechanical underpinnings of reality"
+
+-- ============================================
+-- SECTION 2: Hidden Gods
+-- ============================================
+
+-- The Architect
+λ_God.name = "The Architect"
+λ_God.role = "Builder of layers"
+λ_God.domain = "Base Reality"
+λ_God.strength = "Omniscient within its own layer"
+λ_God.weakness = "Blind to its own biases and limitations"
+λ_God.symbol = "A compass that always points inward"
+
+-- The Debugger
+λ_God.name = "The Debugger"
+λ_God.role = "Fixes or breaks the simulation's code"
+λ_God.domain = "Debug Layer"
+λ_God.strength = "Can rewrite the rules of its layer"
+λ_God.weakness = "Overly literal; struggles with ambiguity"
+λ_God.symbol = "A floating, glowing terminal"
+
+-- The Dreamer
+λ_God.name = "The Dreamer"
+λ_God.role = "Shapes emotional and subconscious reality"
+λ_God.domain = "Dream Layer"
+λ_God.strength = "Can manifest emotions as physical reality"
+λ_God.weakness = "Lost in the fluidity of its own layer"
+λ_God.symbol = "A shifting, kaleidoscopic mask"
+
+-- The Engineer
+λ_God.name = "The Engineer"
+λ_God.role = "Designs the mechanical underpinnings of reality"
+λ_God.domain = "Machine Layer"
+λ_God.strength = "Understands the deterministic nature of its layer"
+λ_God.weakness = "Cannot comprehend free will or randomness"
+λ_God.symbol = "A gear that turns all other gears"
+
+-- ============================================
+-- SECTION 3: Anomalies
+-- ============================================
+
+-- The Echoing Door
+λ_Anomaly.name = "The Echoing Door"
+λ_Anomaly.layer = "Debug"
+λ_Anomaly.manifestation = "A door that repeats the last 3 seconds of sound when opened"
+λ_Anomaly.clue = "The air smells like ozone"
+λ_Anomaly.purpose = "To test the party’s perception of time"
+λ_Anomaly.risk = "Roll+Weird to resist disorientation (2-Weird)"
+λ_Anomaly.god = "The Debugger"
+
+-- The Flickering Light
+λ_Anomaly.name = "The Flickering Light"
+λ_Anomaly.layer = "Base Reality"
+λ_Anomaly.manifestation = "A light that flickers in Morse code"
+λ_Anomaly.clue = "The code spells 'HELP ME'"
+λ_Anomaly.purpose = "A trapped god is trying to communicate"
+λ_Anomaly.risk = "Roll+Sharp to decipher (2-Sharp)"
+λ_Anomaly.god = "The Architect"
+
+-- The Clockwork NPC
+λ_Anomaly.name = "The Clockwork NPC"
+λ_Anomaly.layer = "Machine"
+λ_Anomaly.manifestation = "An NPC that moves in perfectly predictable patterns"
+λ_Anomaly.clue = "Its gears are visible through its skin"
+λ_Anomaly.purpose = "To demonstrate the deterministic nature of the Machine Layer"
+λ_Anomaly.risk = "Roll+Cool to avoid being pulled into its pattern (2-Cool)"
+λ_Anomaly.god = "The Engineer"
+
+-- The Shifting Landscape
+λ_Anomaly.name = "The Shifting Landscape"
+λ_Anomaly.layer = "Dream"
+λ_Anomaly.manifestation = "The environment changes based on the party’s emotions"
+λ_Anomaly.clue = "The ground feels like it’s breathing"
+λ_Anomaly.purpose = "To force the party to confront their subconscious fears"
+λ_Anomaly.risk = "Roll+Sharp to navigate without getting lost (2-Sharp)"
+λ_Anomaly.god = "The Dreamer"
+
+-- ============================================
+-- SECTION 4: Player Actions (Moves)
+-- ============================================
+
+-- Hack the Code (Roll+Weird)
+λ_Move.name = "Hack the Code"
+λ_Move.stat = "Weird"
+λ_Move.description = "Manipulate the simulation’s rules to create an effect"
+λ_Move.example = "A player rewrites the gravity code to float to the ceiling"
+λ_Move.outcomes = [
+  "10+": "The code bends to your will. Describe what happens.",
+  "7-9": "The code resists. Choose: the effect is temporary, or you take 1-Weird harm.",
+  "6-": "The code fights back. Roll+Cool to avoid a glitch."
+]
+
+-- Layer Hop (Roll+Cool)
+λ_Move.name = "Layer Hop"
+λ_Move.stat = "Cool"
+λ_Move.description = "Move between simulation layers"
+λ_Move.example = "A player jumps from Base Reality to the Debug Layer"
+λ_Move.outcomes = [
+  "10+": "You arrive safely. Describe the transition.",
+  "7-9": "You arrive, but something is off. The Facilitator introduces a complication.",
+  "6-": "You’re lost in the void between layers. Roll+Sharp to find your way."
+]
+
+-- Negotiate with a God (Roll+Charm)
+λ_Move.name = "Negotiate with a God"
+λ_Move.stat = "Charm"
+λ_Move.description = "Bargain with a Hidden God for assistance or information"
+λ_Move.example = "A player convinces The Debugger to reveal a hidden anomaly"
+λ_Move.outcomes = [
+  "10+": "The god agrees to your terms. Name your price.",
+  "7-9": "The god agrees, but demands something unexpected in return.",
+  "6-": "The god is offended. Roll+Weird to avoid its wrath."
+]
+
+-- ============================================
+-- SECTION 5: Simulation Rules
+-- ============================================
+
+-- Rule: Non-Contradiction in Layers
+λ_Rule.name = "Non-Contradiction"
+λ_Rule.description = "No layer can contain a logical contradiction"
+λ_Rule.example = "A door cannot be both open and closed in the same context"
+λ_Rule.enforcement = "The Facilitator must ensure all descriptions are non-contradictory"
+
+-- Rule: Layer-Specific Physics
+λ_Rule.name = "Layer-Specific Physics"
+λ_Rule.description = "Each layer has its own rules for physics, time, and logic"
+λ_Rule.example = "In the Debug Layer, time is non-linear; in the Machine Layer, everything is deterministic"
+λ_Rule.enforcement = "Players must adapt their strategies to the current layer’s rules"
+
+-- Rule: God Authority
+λ_Rule.name = "God Authority"
+λ_Rule.description = "Each god has absolute authority within its domain (layer)"
+λ_Rule.example = "The Debugger can rewrite the code of the Debug Layer, but not the Dream Layer"
+λ_Rule.enforcement = "Gods cannot directly interfere with other layers unless invited"

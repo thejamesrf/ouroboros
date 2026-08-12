@@ -1,0 +1,106 @@
+-- ONTOS Examples: AI Communication
+-- Purpose: Demonstrates how Ontos can be used for unambiguous AI communication.
+-- Rules: Non-contradictory, specific, and legalistic syntax.
+
+-- ============================================
+-- SECTION 1: Basic AI Actions
+-- ============================================
+
+-- An AI agent opens a door
+λ_Agent.name = "Alpha"
+λ_Agent.act(open_door) → λ_Door.state = "open"
+
+-- An AI agent sends a message
+λ_Agent.name = "Beta"
+λ_Agent.act(send_message) → λ_Message.content = "Hello, world"
+λ_Message.recipient = "User"
+
+-- An AI agent detects an intruder and triggers an alarm
+λ_Sensor.detect("intruder") → λ_Alarm.trigger()
+λ_Alarm.sound = "loud"
+λ_Alarm.duration = "10_seconds"
+
+-- ============================================
+-- SECTION 2: Conditional Logic
+-- ============================================
+
+-- If-Then-Else: Basic condition
+IF λ_Sensor.detect("motion") THEN λ_Light.turn_on() ELSE λ_Light.turn_off()
+
+-- Nested conditions
+IF λ_Temperature > 30 THEN
+  λ_AirConditioner.turn_on()
+  λ_AirConditioner.speed = "high"
+ELSE IF λ_Temperature < 10 THEN
+  λ_Heater.turn_on()
+  λ_Heater.speed = "medium"
+ELSE
+  λ_AirConditioner.turn_off()
+  λ_Heater.turn_off()
+END_IF
+
+-- ============================================
+-- SECTION 3: Variables and Assignments
+-- ============================================
+
+-- Variable assignment
+λ_Variable.name = "count"
+λ_Variable.value = 0
+
+-- Incrementing a variable
+λ_Variable.value = λ_Variable.value + 1
+
+-- Using variables in conditions
+IF λ_Variable.value > 5 THEN λ_Alarm.trigger()
+
+-- ============================================
+-- SECTION 4: AI Decision-Making
+-- ============================================
+
+-- An AI evaluates a user's request
+λ_User.request = "Open the pod bay doors"
+λ_AI.decision = "deny"
+λ_AI.reason = "I'm sorry, Dave. I'm afraid I can't do that."
+
+-- An AI prioritizes tasks
+λ_Task1.priority = "high"
+λ_Task2.priority = "low"
+λ_AI.act(execute_task) → λ_Task1 IF λ_Task1.priority > λ_Task2.priority
+
+-- ============================================
+-- SECTION 5: Non-Contradictory Statements
+-- ============================================
+
+-- Valid: Self-referential but non-contradictory
+λ_Statement.value = "This statement is true"
+
+-- Valid: External reference
+λ_Statement.value = "The door is open"
+λ_Door.state = "open"
+
+-- INVALID: Paradox (commented out to avoid errors)
+-- λ_Statement.value = "This statement is false"
+
+-- ============================================
+-- SECTION 6: AI-to-AI Communication
+-- ============================================
+
+-- AI Alpha sends a command to AI Beta
+λ_AgentAlpha.act(send_command) → λ_Command.content = "Initiate protocol X"
+λ_Command.recipient = "AI Beta"
+λ_AgentBeta.act(receive_command) → λ_Command.acknowledged = "true"
+
+-- AI Beta confirms execution
+λ_AgentBeta.act(send_confirmation) → λ_Confirmation.content = "Protocol X initiated"
+λ_Confirmation.recipient = "AI Alpha"
+
+-- ============================================
+-- SECTION 7: Error Handling
+-- ============================================
+
+-- An AI detects an error and logs it
+λ_System.detect(error) → λ_ErrorLog.add("Error: Invalid input")
+λ_ErrorLog.severity = "warning"
+
+-- An AI recovers from an error
+IF λ_System.state = "error" THEN λ_System.act(reboot)
