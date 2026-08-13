@@ -87,6 +87,14 @@ public class Anomaly {
                         "To challenge your memory of reality.",
                         "Roll+Cool to navigate without getting lost.",
                         Layer.DREAM
+                    ),
+                    new Anomaly(
+                        "The Ouroboros",
+                        "A snake eating its own tail, floating in the void.",
+                        "The cycle is eternal. You are both the eater and the eaten.",
+                        "To reveal the ultimate truth of the simulation.",
+                        "Roll+Sharp to accept the truth (or lose your sanity).",
+                        Layer.DREAM
                     )
                 );
             case BASE_REALITY:
@@ -114,6 +122,22 @@ public class Anomaly {
                         "To reveal the layers beneath reality.",
                         "Roll+Cool to investigate without drawing attention.",
                         Layer.BASE_REALITY
+                    ),
+                    new Anomaly(
+                        "The Glitching Phone",
+                        "Your phone shows a call from your future self.",
+                        "The call log shows the call happened yesterday.",
+                        "To challenge your understanding of time.",
+                        "Roll+Sharp to remember the conversation.",
+                        Layer.BASE_REALITY
+                    ),
+                    new Anomaly(
+                        "The Invisible Wall",
+                        "A wall that only you can see, blocking your path.",
+                        "Others walk through it as if it doesn't exist.",
+                        "To test your perception of shared reality.",
+                        "Roll+Weird to phase through the wall.",
+                        Layer.BASE_REALITY
                     )
                 );
             case DEBUG:
@@ -140,6 +164,22 @@ public class Anomaly {
                         "The last line reads: 'Segmentation fault. Core dumped.'",
                         "To reveal the layer's code-like nature.",
                         "Roll+Sharp to interpret the errors.",
+                        Layer.DEBUG
+                    ),
+                    new Anomaly(
+                        "The Shadow Coder",
+                        "Your shadow moves independently and types on an invisible keyboard.",
+                        "The shadow's code seems to affect the world around you.",
+                        "To hint at the power of code in this layer.",
+                        "Roll+Charm to communicate with your shadow.",
+                        Layer.DEBUG
+                    ),
+                    new Anomaly(
+                        "The Infinite Loop",
+                        "A section of the world repeats endlessly, like a broken record.",
+                        "You see yourself stuck in the loop, trying to break free.",
+                        "To test your ability to escape recursive traps.",
+                        "Roll+Hot to disrupt the loop.",
                         Layer.DEBUG
                     )
                 );

@@ -12,12 +12,13 @@ import java.util.Scanner;
  * - Playbooks: Choose from The Hacker, The Glitch, or The Architect.
  * - Save/Load: Save your progress and continue later.
  * - ASCII Art: Visual flair for layers, anomalies, and gods.
- * - Cyclical Layers: Dream -> Base Reality -> Debug -> Dream...
+ * - Cyclical Win Condition: Complete the cycle to retain a piece of "self" and start anew.
  * 
  * Themes:
  * - Simulation Hypothesis: Reality is a stack of simulations.
  * - Jungian Archetypes & IFS: Characters are shaped by inner parts.
  * - Cyclical Layers: Players transition between layers in a loop.
+ * - Ouroboros: The cycle is eternal; the player retains memories/stats between cycles.
  */
 public class Main {
     public static void main(String[] args) {
@@ -57,9 +58,10 @@ public class Main {
             System.out.println("1. Explore (encounter an anomaly)");
             System.out.println("2. View stats");
             System.out.println("3. View discovered clues");
-            System.out.println("4. Save game");
-            System.out.println("5. Load game");
-            System.out.println("6. Quit");
+            System.out.println("4. View cycle info");
+            System.out.println("5. Save game");
+            System.out.println("6. Load game");
+            System.out.println("7. Quit");
             System.out.print("> ");
 
             int choice;
@@ -83,16 +85,19 @@ public class Main {
                     story.showClues();
                     break;
                 case 4:
-                    saveGame(scanner, player);
+                    story.showCycleInfo();
                     break;
                 case 5:
+                    saveGame(scanner, player);
+                    break;
+                case 6:
                     player = loadGame(scanner);
                     if (player != null) {
                         story = new Story(player, scanner);
                         System.out.println("Game loaded. Continuing adventure...");
                     }
                     break;
-                case 6:
+                case 7:
                     playing = false;
                     story.end();
                     break;

@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 /**
  * Manages the narrative flow of Hidden Gods.
- * Handles layer transitions, anomaly encounters, and Hidden God interactions.
+ * Handles layer transitions, anomaly encounters, Hidden God interactions, and cyclical win conditions.
  */
 public class Story {
     private Player player;
@@ -102,6 +102,9 @@ public class Story {
         } else {
             System.out.println("Invalid choice. The anomaly fades away.");
         }
+
+        // Check for win condition after every action
+        checkWinCondition();
     }
 
     /**
@@ -230,6 +233,49 @@ public class Story {
     }
 
     /**
+     * Checks if the player has completed the win condition (visited all layers + found the final clue).
+     * If so, starts a new cycle with retained memories/stats.
+     */
+    private void checkWinCondition() {
+        player.checkAllLayersVisited();
+        if (player.hasVisitedAllLayers()) {
+            // Check if player has the final clue (e.g., "The cycle is eternal")
+            boolean hasFinalClue = player.getDiscoveredClues().stream()
+                .anyMatch(clue -> clue.toLowerCase().contains("cycle") || 
+                                 clue.toLowerCase().contains("eternal") ||
+                                 clue.toLowerCase().contains("ouroboros"));
+
+            if (hasFinalClue) {
+                System.out.println("\n" + AsciiArt.BOLD_DIVIDER);
+                AsciiArt.printTitle("CYCLE COMPLETE");
+                System.out.println("You have uncovered the truth: The simulation is cyclical.");
+                System.out.println("The Hidden Gods whisper: 'The ouroboros eats its own tail.'");
+
+                // Retain a piece of self
+                player.retainBestStat();  // +1 to highest stat
+                String lastClue = player.getDiscoveredClues().get(player.getDiscoveredClues().size() - 1);
+                player.addRetainedMemory("Cycle " + player.getCycleCount() + ": \"" + lastClue + "\"");
+
+                // Start a new cycle
+                player.incrementCycle();
+                player.setCurrentLayer(Layer.DREAM);  // Reset to Dream Layer
+                System.out.println("\n✨ A new cycle begins... You retain a piece of your former self.");
+                System.out.println("✨ +1 to your highest stat!");
+
+                // Show retained memories
+                if (!player.getRetainedMemories().isEmpty()) {
+                    System.out.println("\n📜 Retained Memories:");
+                    for (String mem : player.getRetainedMemories()) {
+                        System.out.println("  - " + mem);
+                    }
+                }
+
+                describeCurrentLayer();  // Restart in Dream Layer
+            }
+        }
+    }
+
+    /**
      * Extracts the roll value from a move result string.
      */
     private int extractRollValue(String result) {
@@ -265,6 +311,22 @@ public class Story {
     }
 
     /**
+     * Displays cycle info (cycle count + retained memories).
+     */
+    public void showCycleInfo() {
+        AsciiArt.printTitle("CYCLE INFO");
+        System.out.println("🔄 Cycle: " + player.getCycleCount());
+        if (!player.getRetainedMemories().isEmpty()) {
+            System.out.println("\n📜 Retained Memories:");
+            for (String memory : player.getRetainedMemories()) {
+                System.out.println("  - " + memory);
+            }
+        } else {
+            System.out.println("No memories retained yet.");
+        }
+    }
+
+    /**
      * Ends the game and displays a summary.
      */
     public void end() {
@@ -276,6 +338,7 @@ public class Story {
         }
         System.out.println("\nFinal Stats:");
         System.out.println(player.getStatsSummary());
+        System.out.println("\nTotal Cycles Completed: " + player.getCycleCount());
         System.out.println(AsciiArt.BOLD_DIVIDER);
     }
 }
