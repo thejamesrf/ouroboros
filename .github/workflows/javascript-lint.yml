@@ -1,0 +1,34 @@
+name: JavaScript Lint
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'hidden-gods-mobile/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'hidden-gods-mobile/**'
+
+jobs:
+  lint:
+    name: Lint JavaScript Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        working-directory: hidden-gods-mobile
+        run: |
+          npm install
+
+      - name: Lint with ESLint
+        working-directory: hidden-gods-mobile
+        run: |
+          npx eslint . --ext .js,.jsx

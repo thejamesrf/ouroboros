@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  python-lint:
+    name: Python Lint
+    uses: ./.github/workflows/python-lint.yml
+
+  python-test:
+    name: Python Test
+    uses: ./.github/workflows/python-test.yml
+
+  javascript-lint:
+    name: JavaScript Lint
+    uses: ./.github/workflows/javascript-lint.yml
+
+  mobile-build:
+    name: Mobile Build
+    uses: ./.github/workflows/mobile-build.yml

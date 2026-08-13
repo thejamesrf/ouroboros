@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ouroboros"
+version = "0.1.0"
+description = "Tools for the Ouroboros Project (Hidden Gods, Ontos, Aperios)"
+authors = [{ name = "The James RF", email = "your@email.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy", "rich", "typer"]
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["ontos-language/ONTOSplayground/tests"]

@@ -1,0 +1,33 @@
+name: Python Lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint Python Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install ruff mypy
+
+      - name: Lint with Ruff
+        run: |
+          ruff check .
+
+      - name: Type check with mypy
+        run: |
+          mypy ontos-language/ONTOSplayground/tools/ --ignore-missing-imports
+          mypy hidden-gods-app/ --ignore-missing-imports

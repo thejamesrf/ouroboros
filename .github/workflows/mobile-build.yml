@@ -1,0 +1,50 @@
+name: Mobile Build Check
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'hidden-gods-mobile/**'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'hidden-gods-mobile/**'
+
+jobs:
+  build:
+    name: Check Mobile App Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Expo CLI
+        run: |
+          npm install -g expo-cli
+
+      - name: Install dependencies
+        working-directory: hidden-gods-mobile
+        run: |
+          npm install
+
+      - name: Check Expo config
+        working-directory: hidden-gods-mobile
+        run: |
+          expo config --validation
+
+      - name: Prebuild (Android)
+        working-directory: hidden-gods-mobile
+        run: |
+          expo prebuild --platform android --no-install
+        continue-on-error: true
+
+      - name: Prebuild (iOS)
+        working-directory: hidden-gods-mobile
+        run: |
+          expo prebuild --platform ios --no-install
+        continue-on-error: true
