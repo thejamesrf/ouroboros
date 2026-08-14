@@ -236,3 +236,221 @@ def _chain_to_english(source: str) -> str:
 
     # Bare atom.
     return _gloss_constant(source)
+
+
+# --------------------------------------------------------------------------- #
+# English -> Ontos (the Navigator direction).
+# --------------------------------------------------------------------------- #
+#
+# The reverse direction is intentionally a *sketch*: natural language is
+# ambiguous, so we extract a best-effort Ontos rendering by spotting entity
+# categories, layer names, and relational verbs in the prose. The output is
+# always valid Ontos (fully parenthesized), which the validator confirms.
+
+import re as _re
+from dataclasses import dataclass, field
+
+# Keyword -> Ontos glyph. Order matters: check longer phrases first.
+_ENTITY_KEYWORDS: list[tuple[str, str]] = [
+    # Gods (by name or role).
+    ("architect", "𝒢_Architect"),
+    ("debugger", "𝒢_Debugger"),
+    ("dreamer", "𝒢_Dreamer"),
+    ("engineer", "𝒢_Engineer"),
+    ("god", "𝒢_God"),
+    # Players (by role or "player X").
+    ("player", "𝒫_Player"),
+    ("alice", "𝒫_Alice"),
+    ("brett", "𝒫_Brett"),
+    ("cleo", "𝒫_Cleo"),
+    # NPCs.
+    ("guide", "𝒩_Guide"),
+    ("npc", "𝒩_NPC"),
+]
+
+_LAYER_KEYWORDS: list[tuple[str, str]] = [
+    ("base reality", "λ₀"),       # Base Reality
+    ("debug", "λ_Debug"),
+    ("dream", "λ_Dream"),
+    ("machine", "λ_Machine"),
+]
+
+# Verbs that imply an implication (A -> B).
+_IMPLY_VERBS = {"implies", "causes", "leads to", "creates", "reveals", "opens", "triggers"}
+# Verbs that imply conjunction (A and B).
+_AND_VERBS = {"and", "with", "alongside"}
+# Verbs that imply a relation (A = B, or A is-in layer).
+_REL_VERBS = {"is", "equals", "resides in", "lives in", "enters", "in"}
+
+
+@dataclass
+class NavigatorOutput:
+    """Structured summary of a story, in Ontos terms.
+
+    The 'Navigator' is the conceptual bridge between natural-language lore and
+    the precision language: it reads a story, extracts the actors/layers/anomalies
+    and the relations between them, and emits valid Ontos statements plus a
+    human-readable summary.
+    """
+
+    entities: list[str] = field(default_factory=list)
+    layers: list[str] = field(default_factory=list)
+    anomalies: list[str] = field(default_factory=list)
+    statements: list[str] = field(default_factory=list)
+    summary: str = ""
+
+    def render(self) -> str:
+        """Pretty-print the Navigator output for display."""
+
+        lines = ["🧭 Navigator Output", "=" * 40]
+        if self.entities:
+            lines.append("Actors:  " + ", ".join(self.entities))
+        if self.layers:
+            lines.append("Layers:  " + ", ".join(self.layers))
+        if self.anomalies:
+            lines.append("Anomalies: " + ", ".join(self.anomalies))
+        if self.statements:
+            lines.append("")
+            lines.append("Ontos statements:")
+            for s in self.statements:
+                lines.append(f"  {s}")
+        if self.summary:
+            lines.append("")
+            lines.append(f"Summary: {self.summary}")
+        return "\n".join(lines)
+
+
+def _find_anomalies(text: str) -> list[str]:
+    """Heuristically spot anomaly references in prose."""
+
+    anomalies: list[str] = []
+    # "the echoing door", "a glitch", "an anomaly", "the flicker", etc.
+    anomaly_names = {
+        "echoing door": "⚡_EchoingDoor",
+        "flicker": "⚡_Flicker",
+        "loop room": "⚡_LoopRoom",
+        "glitch": "⚡_Glitch",
+        "anomaly": "⚡_Anomaly",
+        "null pointer": "⚡_NullPointer",
+    }
+    lower = text.lower()
+    for phrase, glyph in anomaly_names.items():
+        if phrase in lower:
+            if glyph not in anomalies:
+                anomalies.append(glyph)
+    return anomalies
+
+
+def translate_from_english(text: str) -> str:
+    """Render an English sentence as a best-effort Ontos statement.
+
+    This is a sketch translator: it spots entities, layers, and relational
+    verbs, then composes a fully-parenthesized Ontos expression. The output is
+    always grammatical; when the input is too vague to map, it returns a
+    Gödelian acknowledgement.
+    """
+
+    text = text.strip()
+    if not text:
+        return ""
+
+    lower = text.lower()
+
+    # Gather entities mentioned.
+    entities: list[str] = []
+    for kw, glyph in _ENTITY_KEYWORDS:
+        if kw in lower and glyph not in entities:
+            entities.append(glyph)
+
+    # Gather layers mentioned.
+    layers: list[str] = []
+    for kw, glyph in _LAYER_KEYWORDS:
+        if kw in lower and glyph not in layers:
+            layers.append(glyph)
+
+    # Gather anomalies.
+    anomalies = _find_anomalies(text)
+
+    # Decide the operator from verbs.
+    op = "→"  # default: implies
+    for verb in _IMPLY_VERBS:
+        if verb in lower:
+            op = "→"
+            break
+    else:
+        for verb in _AND_VERBS:
+            if verb in lower:
+                op = "∧"
+                break
+
+    # Compose. Prefer: [layer] (entity -> anomaly -> entity ...)
+    atoms = entities + anomalies
+    if not atoms:
+        # Nothing recognizable -> Gödelian acknowledgement.
+        return "⏅(Ontos) ∧ (Ontos → ⏄)"
+
+    # Build a left-folded implication chain, fully parenthesized.
+    if len(atoms) == 1:
+        body = atoms[0]
+    else:
+        body = atoms[0]
+        for nxt in atoms[1:]:
+            body = f"({body} {op} {nxt})"
+
+    if layers:
+        # Scope under the first layer mentioned.
+        return f"[{layers[0]}] ({body})"
+    return body
+
+
+def summarize_story(text: str) -> NavigatorOutput:
+    """Read a story summary and emit Ontos statements + a Navigator report.
+
+    This is the 'Navigator' bridge: it takes free-form English prose (a story
+    beat, a session recap, a lore fragment) and distills it into the precision
+    language. Each sentence becomes a best-effort Ontos statement; the whole
+    text yields a structured :class:`NavigatorOutput`.
+    """
+
+    text = text.strip()
+    if not text:
+        return NavigatorOutput(summary="(empty input)")
+
+    # Split into sentences on . ! ?
+    sentences = [s.strip() for s in _re.split(r"[.!?]+", text) if s.strip()]
+
+    out = NavigatorOutput()
+    seen_entities: set[str] = set()
+    seen_layers: set[str] = set()
+    seen_anomalies: set[str] = set()
+
+    for sentence in sentences:
+        # Collect entities/layers/anomalies across the whole text.
+        for kw, glyph in _ENTITY_KEYWORDS:
+            if kw in sentence.lower() and glyph not in seen_entities:
+                seen_entities.add(glyph)
+                out.entities.append(glyph)
+        for kw, glyph in _LAYER_KEYWORDS:
+            if kw in sentence.lower() and glyph not in seen_layers:
+                seen_layers.add(glyph)
+                out.layers.append(glyph)
+        for a in _find_anomalies(sentence):
+            if a not in seen_anomalies:
+                seen_anomalies.add(a)
+                out.anomalies.append(a)
+
+        stmt = translate_from_english(sentence)
+        if stmt:
+            out.statements.append(stmt)
+
+    # Compose a one-line summary.
+    parts = []
+    if out.entities:
+        parts.append(", ".join(out.entities))
+    if out.layers:
+        parts.append("in " + " / ".join(out.layers))
+    if out.anomalies:
+        parts.append("encountering " + ", ".join(out.anomalies))
+    out.summary = " — ".join(parts) if parts else "no recognizable actors or layers found"
+
+    return out

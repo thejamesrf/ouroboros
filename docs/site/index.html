@@ -26,9 +26,10 @@
   .panel.active { display: block; }
   .field { margin-bottom: 1rem; }
   label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; }
-  input[type=text], input[type=number], select {
+  input[type=text], input[type=number], select, textarea {
     width: 100%; padding: 0.6rem; background: var(--bg); color: var(--text);
     border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 0.95rem; }
+  textarea { min-height: 100px; resize: vertical; }
   button { padding: 0.55rem 1.2rem; background: var(--accent); color: #fff; border: none;
     border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
   button:hover { filter: brightness(1.1); }
@@ -50,19 +51,21 @@
   .slider-row { display: flex; align-items: center; gap: 0.5rem; }
   .slider-row input[type=range] { flex: 1; }
   .slider-val { font-family: monospace; min-width: 2.5rem; text-align: right; color: var(--accent); }
+  h4 { color: var(--text); }
 </style>
 </head>
 <body>
 <header>
   <h1>🜲 Ouroboros Tools — Live Demo</h1>
-  <p>Ontos validator · Translator · Anomaly Forge · Realm viewer · Verdant Path check-in — all in your browser, no install.</p>
+  <p>Ontos validator · English↔Ontos translator · Story Navigator · Anomaly Forge · Realm viewer · Verdant Path — all in your browser.</p>
 </header>
 
 <main>
   <div id="status" class="status loading show">⏳ Loading Python (Pyodide ~6MB)… first load takes a moment.</div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="validate">🟣 Ontos Validator</button>
+    <button class="tab active" data-tab="navigator">🧭 Story Navigator</button>
+    <button class="tab" data-tab="validate">🟣 Ontos Validator</button>
     <button class="tab" data-tab="translate">🟢 Translator</button>
     <button class="tab" data-tab="anomaly">🟢 Anomaly Forge</button>
     <button class="tab" data-tab="realm">🟣 Realm Viewer</button>
@@ -70,8 +73,20 @@
     <button class="tab" data-tab="verdant">🌿 Verdant Path</button>
   </div>
 
+  <!-- Story Navigator (the headline feature: English story -> Ontos/Navigator output) -->
+  <div id="navigator" class="panel active">
+    <div class="field">
+      <label for="nav-input">Paste a story summary, session recap, or lore fragment</label>
+      <textarea id="nav-input">Alice enters the Debug layer. She triggers the Echoing Door, which repeats the last 3 seconds of sound. The anomaly reveals the Architect, who creates a new glitch. The Debugger awakens.</textarea>
+      <div class="hint">The Navigator extracts actors, layers, and anomalies from your prose and emits valid Ontos statements.</div>
+    </div>
+    <button id="nav-run" disabled>Generate Ontos/Navigator output</button>
+    <h4 style="margin-top:1.25rem;">Navigator output</h4>
+    <pre id="nav-out">—</pre>
+  </div>
+
   <!-- Validator -->
-  <div id="validate" class="panel active">
+  <div id="validate" class="panel">
     <div class="field">
       <label for="v-input">Ontos statement</label>
       <input type="text" id="v-input" value="(A ∧ B) → C" />
@@ -82,15 +97,22 @@
     <pre id="v-out">—</pre>
   </div>
 
-  <!-- Translator -->
+  <!-- Translator (both directions) -->
   <div id="translate" class="panel">
     <div class="field">
-      <label for="t-input">Ontos statement to gloss</label>
+      <label for="t-dir">Direction</label>
+      <select id="t-dir">
+        <option value="to">Ontos → English</option>
+        <option value="from">English → Ontos</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="t-input">Input</label>
       <input type="text" id="t-input" value="[λ_Debug] (𝒫_Alice → (⚡_EchoingDoor → (𝒢_Architect → ⚡_NewAnomaly)))" />
-      <div class="hint">Translates Ontos symbols into English using the phonology.md tables.</div>
+      <div class="hint" id="t-hint">Translates an Ontos statement into an English gloss.</div>
     </div>
     <button id="t-run" disabled>Translate</button>
-    <h4 style="margin-top:1.25rem;">English gloss</h4>
+    <h4 style="margin-top:1.25rem;">Output</h4>
     <pre id="t-out">—</pre>
   </div>
 
@@ -137,7 +159,7 @@
 
   <!-- Verdant Path check-in -->
   <div id="verdant" class="panel">
-    <p style="color:var(--muted);font-size:0.9rem;">Log a daily check-in and get your fatigue color cue + readiness adjustment. From the Verdant Path resilience system.</p>
+    <p style="color:var(--muted);font-size:0.9rem;">Log a daily check-in and get your fatigue color cue + readiness adjustment.</p>
     <div class="row">
       <div class="field">
         <label>Energy (1–5)</label>
@@ -170,7 +192,6 @@
     <h4 style="margin-top:1.25rem;">Fatigue cue & readiness</h4>
     <pre id="vp-out">—</pre>
     <h4 style="margin-top:1.25rem;">Sample weekly TRIMP</h4>
-    <p style="color:var(--muted);font-size:0.85rem;">Pick how many Low/Medium/High sessions this week:</p>
     <div class="row">
       <div class="field"><label>Low sessions</label><input type="number" id="vp-low" value="1" min="0" max="10" /></div>
       <div class="field"><label>Medium sessions</label><input type="number" id="vp-med" value="1" min="0" max="10" /></div>
@@ -187,18 +208,17 @@
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
 <script>
-// Source URLs point at `main` so the demo auto-tracks future edits.
 const RAW = "https://raw.githubusercontent.com/thejamesrf/ouroboros/main";
 const SOURCES = {
   "ouroboros/__init__.py":  `${RAW}/src/ouroboros/__init__.py`,
   "ouroboros/ontos.py":     `${RAW}/src/ouroboros/ontos.py`,
-  "ouroboros/translate.py":  `${RAW}/src/ouroboros/translate.py`,
-  "ouroboros/anomalies.py": `${RAW}/src/ouroboros/anomalies.py`,
-  "ouroboros/realms.py":    `${RAW}/src/ouroboros/realms.py`,
+  "ouroboros/translate.py": `${RAW}/src/ouroboros/translate.py`,
+  "ouroboros/anomalies.py":`${RAW}/src/ouroboros/anomalies.py`,
+  "ouroboros/realms.py":   `${RAW}/src/ouroboros/realms.py`,
   "verdant_path/__init__.py": `${RAW}/verdant-path/src/verdant_path/__init__.py`,
   "verdant_path/fatigue.py":  `${RAW}/verdant-path/src/verdant_path/fatigue.py`,
-  "verdant_path/habits.py":   `${RAW}/verdant-path/src/verdant_path/habits.py`,
   "verdant_path/trimp.py":    `${RAW}/verdant-path/src/verdant_path/trimp.py`,
+  "verdant_path/habits.py":   `${RAW}/verdant-path/src/verdant_path/habits.py`,
   "verdant_path/movements.py":`${RAW}/verdant-path/src/verdant_path/movements.py`,
   "verdant_path/tracker.py":  `${RAW}/verdant-path/src/verdant_path/tracker.py`,
   "verdant_path/templates.py":`${RAW}/verdant-path/src/verdant_path/templates.py`,
@@ -207,7 +227,6 @@ const SOURCES = {
   "verdant_path/session.py":  `${RAW}/verdant-path/src/verdant_path/session.py`,
 };
 
-let pyodideReady = false;
 const statusEl = document.getElementById("status");
 
 async function init() {
@@ -225,16 +244,89 @@ sys.path.insert(0, ".")
 import ouroboros
 from ouroboros import ontos, translate, anomalies, realms
 import verdant_path
-from verdant_path import fatigue, trimp, habits, tracker, movements, templates, planner, metrics
+from verdant_path import fatigue, trimp
+
+# Define helper functions that take a single string arg and return a string.
+# This avoids fragile string-interpolation: we set the arg via globals, then
+# call the helper. runPython returns the last expression's value.
+def _validate(stmt):
+    r = ontos.validate_statement(stmt)
+    lines = ["VALID" if r.valid else "INVALID", stmt]
+    for e in r.errors:
+        lines.append(f"[{e.rule}] {e.message}")
+    return chr(10).join(lines)
+
+def _translate_to(stmt):
+    return translate.translate_to_english(stmt)
+
+def _translate_from(text):
+    out = translate.translate_from_english(text)
+    if out:
+        r = ontos.validate_statement(out)
+        return out + chr(10) + "-> " + ("valid" if r else "invalid")
+    return out
+
+def _navigator(text):
+    return translate.summarize_story(text).render()
+
+def _anomalies(layer, count, seed):
+    import random
+    rng = random.Random(seed)
+    batch = anomalies.generate_batch(count, layer=layer if layer else None, rng=rng)
+    return chr(10).join(a.render() for a in batch)
+
+def _realm():
+    return realms.canonical_realm().to_json()
+
+def _golden():
+    lines = []
+    fails = 0
+    for stmt, expected in ontos.GOLDEN_CASES.items():
+        r = ontos.validate_statement(stmt)
+        ok = r.valid == expected
+        lines.append(("✅" if ok else "❌") + f" expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
+        if not ok:
+            fails += 1
+            for e in r.errors:
+                lines.append(f"     [{e.rule}] {e.message}")
+    lines.append(chr(10) + f"{len(ontos.GOLDEN_CASES)-fails}/{len(ontos.GOLDEN_CASES)} golden cases passed")
+    return chr(10).join(lines)
+
+def _checkin(energy, mood, soreness, sleep, hrv, hrvb):
+    pct = fatigue.fatigue_from_checkin(energy, mood, soreness, sleep, hrv, hrv_baseline=hrvb)
+    cue = fatigue.fatigue_cue(pct)
+    adj = readiness_adjustment = fatigue.readiness_adjustment(pct)
+    bar_w = int(round(pct / 100 * 20))
+    bar = "[" + "█" * bar_w + "·" * (20 - bar_w) + f"] {pct:.1f}%"
+    lines = [
+        f"Energy={energy}/5  Mood={mood}/5  Soreness={soreness}/5",
+        f"Sleep={sleep}h  HRV={hrv}ms (baseline {hrvb})",
+        "",
+        f"Fatigue {bar}",
+        f"Cue: {cue.icon}  -> {cue.guidance}",
+        f"Suggested: {adj.note}",
+    ]
+    v = getattr(adj, "volume_change", 0)
+    i = getattr(adj, "intensity_change", 0)
+    if v or i:
+        vt = f"reduce {-v:.0%}" if v < 0 else (f"increase {v:.0%}" if v > 0 else "hold")
+        it = f"reduce {-i:.0%}" if i < 0 else (f"increase {i:.0%}" if i > 0 else "hold")
+        lines.append(f"Volume: {vt}   Intensity: {it}")
+    return chr(10).join(lines)
+
+def _trimp(lo, med, hi):
+    levels = [trimp.TRIMP.LOW]*lo + [trimp.TRIMP.MEDIUM]*med + [trimp.TRIMP.HIGH]*hi
+    total = trimp.weekly_trimp(levels)
+    return f"{total} TRIMP  ->  {trimp.weekly_trimp_status(total)}"
 `);
     statusEl.textContent = "✅ Python ready. Pick a tab and run a tool.";
     statusEl.className = "status ready show";
-    pyodideReady = true;
     document.querySelectorAll("button[id$='-run']").forEach(b => b.disabled = false);
     window._py = pyodide;
   } catch (err) {
     statusEl.textContent = "❌ " + err.message;
     statusEl.className = "status error show";
+    console.error(err);
   }
 }
 
@@ -248,63 +340,74 @@ document.querySelectorAll(".tab").forEach(tab => {
   });
 });
 
-// Slider value mirrors.
+// Slider mirrors.
 ["energy","mood","soreness","sleep","hrv","hrvb"].forEach(k => {
   const el = document.getElementById("vp-" + k);
   const out = document.getElementById("vp-" + k + "-v");
   el.addEventListener("input", () => { out.textContent = el.value; });
 });
 
-function py(fn) { return window._py.runPython(fn); }
+// Translator direction hint.
+document.getElementById("t-dir").addEventListener("change", (e) => {
+  const hint = document.getElementById("t-hint");
+  const input = document.getElementById("t-input");
+  if (e.target.value === "from") {
+    hint.textContent = "Translates an English sentence into a best-effort Ontos statement.";
+    input.value = "Alice triggers the Echoing Door in the Debug layer, revealing the Architect.";
+  } else {
+    hint.textContent = "Translates an Ontos statement into an English gloss.";
+    input.value = "[λ_Debug] (𝒫_Alice → (⚡_EchoingDoor → (𝒢_Architect → ⚡_NewAnomaly)))";
+  }
+});
+
+// Helper: call a Python helper function with one string arg.
+function callStr(fnName, arg) {
+  window._py.globals.set("_arg", arg);
+  return window._py.runPython(`${fnName}(_arg)`);
+}
+
+// Story Navigator.
+document.getElementById("nav-run").addEventListener("click", () => {
+  const text = document.getElementById("nav-input").value;
+  const out = callStr("_navigator", text);
+  document.getElementById("nav-out").textContent = out || "(no output)";
+});
 
 // Validator.
 document.getElementById("v-run").addEventListener("click", () => {
-  const stmt = document.getElementById("v-input").value;
-  const out = py(`r = ontos.validate_statement(${JSON.stringify(stmt)})
-"\\n".join([f"{'VALID' if r.valid else 'INVALID'}  " + ${JSON.stringify(stmt)}] + [f"[{e.rule}] {e.message}" for e in r.errors])`);
+  const out = callStr("_validate", document.getElementById("v-input").value);
   document.getElementById("v-out").textContent = out || "(no output)";
 });
 
 // Translator.
 document.getElementById("t-run").addEventListener("click", () => {
-  const stmt = document.getElementById("t-input").value;
-  const out = py(`translate.translate_to_english(${JSON.stringify(stmt)})`);
+  const dir = document.getElementById("t-dir").value;
+  const fn = dir === "from" ? "_translate_from" : "_translate_to";
+  const out = callStr(fn, document.getElementById("t-input").value);
   document.getElementById("t-out").textContent = out || "(no output)";
 });
 
 // Anomaly forge.
 document.getElementById("a-run").addEventListener("click", () => {
-  const layer = document.getElementById("a-layer").value || null;
+  const layer = document.getElementById("a-layer").value;
   const count = parseInt(document.getElementById("a-count").value || "1", 10);
   const seedRaw = document.getElementById("a-seed").value.trim();
-  const seed = seedRaw ? parseInt(seedRaw, 10) : null;
-  const layerPy = layer ? JSON.stringify(layer) : "None";
-  const out = py(`anomalies.generate_batch(${count}, layer=${layerPy}, seed=${seed !== null ? seed : "None"})
-"\\n".join(a.render() for a in _)`);
+  const seed = seedRaw ? parseInt(seedRaw, 10) : 0;
+  window._py.globals.set("_layer", layer);
+  window._py.globals.set("_count", count);
+  window._py.globals.set("_seed", seed);
+  const out = window._py.runPython(`_anomalies(_layer, _count, _seed)`);
   document.getElementById("a-out").textContent = out || "(no output)";
 });
 
 // Realm viewer.
 document.getElementById("r-run").addEventListener("click", () => {
-  document.getElementById("r-out").textContent = py(`realms.canonical_realm().to_json()`);
+  document.getElementById("r-out").textContent = window._py.runPython(`_realm()`);
 });
 
 // Golden cases.
 document.getElementById("g-run").addEventListener("click", () => {
-  const out = py(`
-lines = []
-fails = 0
-for stmt, expected in ontos.GOLDEN_CASES.items():
-    r = ontos.validate_statement(stmt)
-    ok = r.valid == expected
-    lines.append(f"{'✅' if ok else '❌'} expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
-    if not ok:
-        fails += 1
-        for e in r.errors:
-            lines.append(f"     [{e.rule}] {e.message}")
-lines.append(f"\\n{len(ontos.GOLDEN_CASES)-fails}/{len(ontos.GOLDEN_CASES)} golden cases passed")
-"\\n".join(lines)`);
-  document.getElementById("g-out").textContent = out;
+  document.getElementById("g-out").textContent = window._py.runPython(`_golden()`);
 });
 
 // Verdant Path check-in.
@@ -315,38 +418,23 @@ document.getElementById("vp-run").addEventListener("click", () => {
   const sl = parseFloat(document.getElementById("vp-sleep").value);
   const hrv = parseFloat(document.getElementById("vp-hrv").value);
   const hrvb = parseFloat(document.getElementById("vp-hrvb").value);
-  const out = py(`
-pct = fatigue.fatigue_from_checkin(${e}, ${m}, ${s}, ${sl}, ${hrv}, hrv_baseline=${hrvb})
-cue = fatigue.fatigue_cue(pct)
-adj = fatigue.readiness_adjustment(pct)
-bar_w = int(round(pct / 100 * 20))
-bar = "[" + "█" * bar_w + "·" * (20 - bar_w) + f"] {pct:.1f}%"
-lines = [
-    f"Energy=${e}/5  Mood=${m}/5  Soreness=${s}/5",
-    f"Sleep=${sl}h  HRV=${hrv}ms (baseline ${hrvb})",
-    "",
-    f"Fatigue {bar}",
-    f"Cue: {cue.icon}  -> {cue.guidance}",
-    f"Suggested: {adj.note}",
-]
-if getattr(adj, "volume_change", 0) or getattr(adj, "intensity_change", 0):
-    v = adj.volume_change
-    vt = f"reduce {-v:.0%}" if v < 0 else (f"increase {v:.0%}" if v > 0 else "hold")
-    i = adj.intensity_change
-    it = f"reduce {-i:.0%}" if i < 0 else (f"increase {i:.0%}" if i > 0 else "hold")
-    lines.append(f"Volume: {vt}   Intensity: {it}")
-"\\n".join(lines)`);
-  document.getElementById("vp-out").textContent = out;
+  window._py.globals.set("_e", e);
+  window._py.globals.set("_m", m);
+  window._py.globals.set("_s", s);
+  window._py.globals.set("_sl", sl);
+  window._py.globals.set("_hrv", hrv);
+  window._py.globals.set("_hrvb", hrvb);
+  document.getElementById("vp-out").textContent =
+    window._py.runPython(`_checkin(_e, _m, _s, _sl, _hrv, _hrvb)`);
 
-  // Weekly TRIMP.
   const lo = parseInt(document.getElementById("vp-low").value || "0", 10);
   const me = parseInt(document.getElementById("vp-med").value || "0", 10);
   const hi = parseInt(document.getElementById("vp-high").value || "0", 10);
-  const tout = py(`
-levels = [trimp.TRIMP.LOW]*${lo} + [trimp.TRIMP.MEDIUM]*${me} + [trimp.TRIMP.HIGH]*${hi}
-total = trimp.weekly_trimp(levels)
-f"{total} TRIMP  ->  {trimp.weekly_trimp_status(total)}"`);
-  document.getElementById("vp-trimp-out").textContent = tout;
+  window._py.globals.set("_lo", lo);
+  window._py.globals.set("_med", me);
+  window._py.globals.set("_hi", hi);
+  document.getElementById("vp-trimp-out").textContent =
+    window._py.runPython(`_trimp(_lo, _med, _hi)`);
 });
 
 init();
