@@ -270,9 +270,7 @@ def _navigator(text):
     return translate.summarize_story(text).render()
 
 def _anomalies(layer, count, seed):
-    import random
-    rng = random.Random(seed)
-    batch = anomalies.generate_batch(count, layer=layer if layer else None, rng=rng)
+    batch = anomalies.generate_batch(count, layer=layer if layer else None, seed=seed)
     return chr(10).join(a.render() for a in batch)
 
 def _realm():
@@ -324,7 +322,8 @@ def _trimp(lo, med, hi):
     document.querySelectorAll("button[id$='-run']").forEach(b => b.disabled = false);
     window._py = pyodide;
   } catch (err) {
-    statusEl.textContent = "❌ " + err.message;
+    const msg = (err && err.message) ? err.message : String(err);
+    statusEl.textContent = "❌ " + msg;
     statusEl.className = "status error show";
     console.error(err);
   }
@@ -389,15 +388,19 @@ document.getElementById("t-run").addEventListener("click", () => {
 
 // Anomaly forge.
 document.getElementById("a-run").addEventListener("click", () => {
-  const layer = document.getElementById("a-layer").value;
-  const count = parseInt(document.getElementById("a-count").value || "1", 10);
-  const seedRaw = document.getElementById("a-seed").value.trim();
-  const seed = seedRaw ? parseInt(seedRaw, 10) : 0;
-  window._py.globals.set("_layer", layer);
-  window._py.globals.set("_count", count);
-  window._py.globals.set("_seed", seed);
-  const out = window._py.runPython(`_anomalies(_layer, _count, _seed)`);
-  document.getElementById("a-out").textContent = out || "(no output)";
+  try {
+    const layer = document.getElementById("a-layer").value;
+    const count = parseInt(document.getElementById("a-count").value || "1", 10);
+    const seedRaw = document.getElementById("a-seed").value.trim();
+    const seed = seedRaw ? parseInt(seedRaw, 10) : 0;
+    window._py.globals.set("_layer", layer);
+    window._py.globals.set("_count", count);
+    window._py.globals.set("_seed", seed);
+    const out = window._py.runPython(`_anomalies(_layer, _count, _seed)`);
+    document.getElementById("a-out").textContent = out || "(no output)";
+  } catch (err) {
+    document.getElementById("a-out").textContent = "❌ " + ((err && err.message) ? err.message : String(err));
+  }
 });
 
 // Realm viewer.
