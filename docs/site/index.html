@@ -6,82 +6,56 @@
 <title>🜲 Ouroboros Tools — Live Demo</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --panel: #161b22;
-    --border: #30363d;
-    --text: #c9d1d9;
-    --muted: #8b949e;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --red: #f85149;
-    --purple: #bc8cff;
+    --bg: #0d1117; --panel: #161b22; --border: #30363d;
+    --text: #c9d1d9; --muted: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --purple: #bc8cff;
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.5;
-  }
-  header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-  }
+  body { margin: 0; font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5; }
+  header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); text-align: center; }
   header h1 { margin: 0; font-size: 1.6rem; }
   header p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.9rem; }
   main { max-width: 920px; margin: 0 auto; padding: 1.5rem; }
-  .tabs {
-    display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border);
-    margin-bottom: 1.25rem; flex-wrap: wrap;
-  }
-  .tab {
-    padding: 0.5rem 1rem; cursor: pointer; border: none; background: none;
-    color: var(--muted); font-size: 0.95rem; border-bottom: 2px solid transparent;
-  }
+  .tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .tab { padding: 0.5rem 1rem; cursor: pointer; border: none; background: none;
+    color: var(--muted); font-size: 0.95rem; border-bottom: 2px solid transparent; }
   .tab.active { color: var(--text); border-bottom-color: var(--accent); }
   .panel { display: none; }
   .panel.active { display: block; }
   .field { margin-bottom: 1rem; }
   label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; }
-  input[type=text], select {
+  input[type=text], input[type=number], select {
     width: 100%; padding: 0.6rem; background: var(--bg); color: var(--text);
-    border: 1px solid var(--border); border-radius: 6px; font-family: monospace;
-    font-size: 0.95rem;
-  }
-  button {
-    padding: 0.55rem 1.2rem; background: var(--accent); color: #fff; border: none;
-    border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
-  }
+    border: 1px solid var(--border); border-radius: 6px; font-family: monospace; font-size: 0.95rem; }
+  button { padding: 0.55rem 1.2rem; background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600; }
   button:hover { filter: brightness(1.1); }
   button:disabled { opacity: 0.4; cursor: not-allowed; }
-  pre {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+  pre { background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
     padding: 1rem; overflow-x: auto; font-size: 0.85rem; min-height: 3rem;
-    white-space: pre-wrap; word-break: break-word;
-  }
-  .status {
-    font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 6px;
-    margin-bottom: 1rem; display: none;
-  }
+    white-space: pre-wrap; word-break: break-word; }
+  .status { font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 6px;
+    margin-bottom: 1rem; display: none; }
   .status.show { display: block; }
   .status.loading { background: #1f2937; color: var(--accent); }
   .status.error { background: #3b1414; color: var(--red); }
   .status.ready { background: #143b1f; color: var(--green); }
   .row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
-  .row .field { flex: 1; min-width: 140px; }
-  .badge-g { color: var(--green); }
-  .badge-r { color: var(--red); }
+  .row .field { flex: 1; min-width: 120px; }
   .hint { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
   footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; }
   a { color: var(--accent); }
+  .slider-row { display: flex; align-items: center; gap: 0.5rem; }
+  .slider-row input[type=range] { flex: 1; }
+  .slider-val { font-family: monospace; min-width: 2.5rem; text-align: right; color: var(--accent); }
 </style>
 </head>
 <body>
 <header>
   <h1>🜲 Ouroboros Tools — Live Demo</h1>
-  <p>Validate Ontos · Translate to English · Forge Anomalies · Explore Realms — all in your browser, no install.</p>
+  <p>Ontos validator · Translator · Anomaly Forge · Realm viewer · Verdant Path check-in — all in your browser, no install.</p>
 </header>
 
 <main>
@@ -93,6 +67,7 @@
     <button class="tab" data-tab="anomaly">🟢 Anomaly Forge</button>
     <button class="tab" data-tab="realm">🟣 Realm Viewer</button>
     <button class="tab" data-tab="golden">✅ Golden Cases</button>
+    <button class="tab" data-tab="verdant">🌿 Verdant Path</button>
   </div>
 
   <!-- Validator -->
@@ -134,11 +109,11 @@
       </div>
       <div class="field">
         <label for="a-count">Count</label>
-        <input type="text" id="a-count" value="1" style="font-family:inherit;" />
+        <input type="text" id="a-count" value="1" />
       </div>
       <div class="field">
         <label for="a-seed">Seed (optional)</label>
-        <input type="text" id="a-seed" value="7" style="font-family:inherit;" />
+        <input type="text" id="a-seed" value="7" />
       </div>
       <button id="a-run" disabled>Forge</button>
     </div>
@@ -159,6 +134,50 @@
     <h4 style="margin-top:1.25rem;">Results</h4>
     <pre id="g-out">—</pre>
   </div>
+
+  <!-- Verdant Path check-in -->
+  <div id="verdant" class="panel">
+    <p style="color:var(--muted);font-size:0.9rem;">Log a daily check-in and get your fatigue color cue + readiness adjustment. From the Verdant Path resilience system.</p>
+    <div class="row">
+      <div class="field">
+        <label>Energy (1–5)</label>
+        <div class="slider-row"><input type="range" id="vp-energy" min="1" max="5" step="1" value="4" /><span class="slider-val" id="vp-energy-v">4</span></div>
+      </div>
+      <div class="field">
+        <label>Mood (1–5)</label>
+        <div class="slider-row"><input type="range" id="vp-mood" min="1" max="5" step="1" value="3" /><span class="slider-val" id="vp-mood-v">3</span></div>
+      </div>
+      <div class="field">
+        <label>Soreness (1–5)</label>
+        <div class="slider-row"><input type="range" id="vp-soreness" min="1" max="5" step="1" value="2" /><span class="slider-val" id="vp-soreness-v">2</span></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label>Sleep (hours)</label>
+        <div class="slider-row"><input type="range" id="vp-sleep" min="0" max="9" step="0.5" value="7" /><span class="slider-val" id="vp-sleep-v">7</span></div>
+      </div>
+      <div class="field">
+        <label>HRV (ms)</label>
+        <div class="slider-row"><input type="range" id="vp-hrv" min="20" max="100" step="1" value="55" /><span class="slider-val" id="vp-hrv-v">55</span></div>
+      </div>
+      <div class="field">
+        <label>HRV baseline (ms)</label>
+        <div class="slider-row"><input type="range" id="vp-hrvb" min="20" max="100" step="1" value="50" /><span class="slider-val" id="vp-hrvb-v">50</span></div>
+      </div>
+    </div>
+    <button id="vp-run" disabled>Check in</button>
+    <h4 style="margin-top:1.25rem;">Fatigue cue & readiness</h4>
+    <pre id="vp-out">—</pre>
+    <h4 style="margin-top:1.25rem;">Sample weekly TRIMP</h4>
+    <p style="color:var(--muted);font-size:0.85rem;">Pick how many Low/Medium/High sessions this week:</p>
+    <div class="row">
+      <div class="field"><label>Low sessions</label><input type="number" id="vp-low" value="1" min="0" max="10" /></div>
+      <div class="field"><label>Medium sessions</label><input type="number" id="vp-med" value="1" min="0" max="10" /></div>
+      <div class="field"><label>High sessions</label><input type="number" id="vp-high" value="1" min="0" max="10" /></div>
+    </div>
+    <pre id="vp-trimp-out">—</pre>
+  </div>
 </main>
 
 <footer>
@@ -168,12 +187,24 @@
 
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
 <script>
+// Source URLs point at `main` so the demo auto-tracks future edits.
+const RAW = "https://raw.githubusercontent.com/thejamesrf/ouroboros/main";
 const SOURCES = {
-  "ouroboros/__init__.py": "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/__init__.py",
-  "ouroboros/ontos.py":     "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/ontos.py",
-  "ouroboros/translate.py": "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/translate.py",
-  "ouroboros/anomalies.py":"https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/anomalies.py",
-  "ouroboros/realms.py":   "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/realms.py",
+  "ouroboros/__init__.py":  `${RAW}/src/ouroboros/__init__.py`,
+  "ouroboros/ontos.py":     `${RAW}/src/ouroboros/ontos.py`,
+  "ouroboros/translate.py":  `${RAW}/src/ouroboros/translate.py`,
+  "ouroboros/anomalies.py": `${RAW}/src/ouroboros/anomalies.py`,
+  "ouroboros/realms.py":    `${RAW}/src/ouroboros/realms.py`,
+  "verdant_path/__init__.py": `${RAW}/verdant-path/src/verdant_path/__init__.py`,
+  "verdant_path/fatigue.py":  `${RAW}/verdant-path/src/verdant_path/fatigue.py`,
+  "verdant_path/habits.py":   `${RAW}/verdant-path/src/verdant_path/habits.py`,
+  "verdant_path/trimp.py":    `${RAW}/verdant-path/src/verdant_path/trimp.py`,
+  "verdant_path/movements.py":`${RAW}/verdant-path/src/verdant_path/movements.py`,
+  "verdant_path/tracker.py":  `${RAW}/verdant-path/src/verdant_path/tracker.py`,
+  "verdant_path/templates.py":`${RAW}/verdant-path/src/verdant_path/templates.py`,
+  "verdant_path/planner.py":  `${RAW}/verdant-path/src/verdant_path/planner.py`,
+  "verdant_path/metrics.py":  `${RAW}/verdant-path/src/verdant_path/metrics.py`,
+  "verdant_path/session.py":  `${RAW}/verdant-path/src/verdant_path/session.py`,
 };
 
 let pyodideReady = false;
@@ -182,22 +213,19 @@ const statusEl = document.getElementById("status");
 async function init() {
   try {
     const pyodide = await loadPyodide();
-    statusEl.textContent = "⏳ Fetching Ouroboros source…";
-    // Fetch each module and write it into Pyodide's virtual filesystem.
+    statusEl.textContent = "⏳ Fetching Ouroboros + Verdant Path source…";
     for (const [path, url] of Object.entries(SOURCES)) {
       const resp = await fetch(url);
       if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${path}`);
-      const code = await resp.text();
-      pyodide.FS.writeFile(path, code);
+      pyodide.FS.writeFile(path, await resp.text());
     }
-    // Import the package.
     await pyodide.runPythonAsync(`
 import sys
 sys.path.insert(0, ".")
-import importlib
 import ouroboros
 from ouroboros import ontos, translate, anomalies, realms
-importlib.reload(ouroboros)
+import verdant_path
+from verdant_path import fatigue, trimp, habits, tracker, movements, templates, planner, metrics
 `);
     statusEl.textContent = "✅ Python ready. Pick a tab and run a tool.";
     statusEl.className = "status ready show";
@@ -220,15 +248,20 @@ document.querySelectorAll(".tab").forEach(tab => {
   });
 });
 
-function py(fn) {
-  return window._py.runPython(fn);
-}
+// Slider value mirrors.
+["energy","mood","soreness","sleep","hrv","hrvb"].forEach(k => {
+  const el = document.getElementById("vp-" + k);
+  const out = document.getElementById("vp-" + k + "-v");
+  el.addEventListener("input", () => { out.textContent = el.value; });
+});
+
+function py(fn) { return window._py.runPython(fn); }
 
 // Validator.
 document.getElementById("v-run").addEventListener("click", () => {
   const stmt = document.getElementById("v-input").value;
   const out = py(`r = ontos.validate_statement(${JSON.stringify(stmt)})
-"\n".join([f"{'VALID' if r.valid else 'INVALID'}  " + ${JSON.stringify(stmt)}] + [f"[{e.rule}] {e.message}" for e in r.errors])`);
+"\\n".join([f"{'VALID' if r.valid else 'INVALID'}  " + ${JSON.stringify(stmt)}] + [f"[{e.rule}] {e.message}" for e in r.errors])`);
   document.getElementById("v-out").textContent = out || "(no output)";
 });
 
@@ -246,16 +279,14 @@ document.getElementById("a-run").addEventListener("click", () => {
   const seedRaw = document.getElementById("a-seed").value.trim();
   const seed = seedRaw ? parseInt(seedRaw, 10) : null;
   const layerPy = layer ? JSON.stringify(layer) : "None";
-  const out = py(`anomalies.generate_batch(${count}, layer=${layerPy}, seed=${seed if seed !== null else "None"})
-# render each
-"\\n".join(a.render() for a in _)` );
+  const out = py(`anomalies.generate_batch(${count}, layer=${layerPy}, seed=${seed !== null ? seed : "None"})
+"\\n".join(a.render() for a in _)`);
   document.getElementById("a-out").textContent = out || "(no output)";
 });
 
 // Realm viewer.
 document.getElementById("r-run").addEventListener("click", () => {
-  const out = py(`realms.canonical_realm().to_json()`);
-  document.getElementById("r-out").textContent = out;
+  document.getElementById("r-out").textContent = py(`realms.canonical_realm().to_json()`);
 });
 
 // Golden cases.
@@ -266,8 +297,7 @@ fails = 0
 for stmt, expected in ontos.GOLDEN_CASES.items():
     r = ontos.validate_statement(stmt)
     ok = r.valid == expected
-    mark = "✅" if ok else "❌"
-    lines.append(f"{mark} expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
+    lines.append(f"{'✅' if ok else '❌'} expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
     if not ok:
         fails += 1
         for e in r.errors:
@@ -275,6 +305,48 @@ for stmt, expected in ontos.GOLDEN_CASES.items():
 lines.append(f"\\n{len(ontos.GOLDEN_CASES)-fails}/{len(ontos.GOLDEN_CASES)} golden cases passed")
 "\\n".join(lines)`);
   document.getElementById("g-out").textContent = out;
+});
+
+// Verdant Path check-in.
+document.getElementById("vp-run").addEventListener("click", () => {
+  const e = parseFloat(document.getElementById("vp-energy").value);
+  const m = parseFloat(document.getElementById("vp-mood").value);
+  const s = parseFloat(document.getElementById("vp-soreness").value);
+  const sl = parseFloat(document.getElementById("vp-sleep").value);
+  const hrv = parseFloat(document.getElementById("vp-hrv").value);
+  const hrvb = parseFloat(document.getElementById("vp-hrvb").value);
+  const out = py(`
+pct = fatigue.fatigue_from_checkin(${e}, ${m}, ${s}, ${sl}, ${hrv}, hrv_baseline=${hrvb})
+cue = fatigue.fatigue_cue(pct)
+adj = fatigue.readiness_adjustment(pct)
+bar_w = int(round(pct / 100 * 20))
+bar = "[" + "█" * bar_w + "·" * (20 - bar_w) + f"] {pct:.1f}%"
+lines = [
+    f"Energy=${e}/5  Mood=${m}/5  Soreness=${s}/5",
+    f"Sleep=${sl}h  HRV=${hrv}ms (baseline ${hrvb})",
+    "",
+    f"Fatigue {bar}",
+    f"Cue: {cue.icon}  -> {cue.guidance}",
+    f"Suggested: {adj.note}",
+]
+if getattr(adj, "volume_change", 0) or getattr(adj, "intensity_change", 0):
+    v = adj.volume_change
+    vt = f"reduce {-v:.0%}" if v < 0 else (f"increase {v:.0%}" if v > 0 else "hold")
+    i = adj.intensity_change
+    it = f"reduce {-i:.0%}" if i < 0 else (f"increase {i:.0%}" if i > 0 else "hold")
+    lines.append(f"Volume: {vt}   Intensity: {it}")
+"\\n".join(lines)`);
+  document.getElementById("vp-out").textContent = out;
+
+  // Weekly TRIMP.
+  const lo = parseInt(document.getElementById("vp-low").value || "0", 10);
+  const me = parseInt(document.getElementById("vp-med").value || "0", 10);
+  const hi = parseInt(document.getElementById("vp-high").value || "0", 10);
+  const tout = py(`
+levels = [trimp.TRIMP.LOW]*${lo} + [trimp.TRIMP.MEDIUM]*${me} + [trimp.TRIMP.HIGH]*${hi}
+total = trimp.weekly_trimp(levels)
+f"{total} TRIMP  ->  {trimp.weekly_trimp_status(total)}"`);
+  document.getElementById("vp-trimp-out").textContent = tout;
 });
 
 init();
