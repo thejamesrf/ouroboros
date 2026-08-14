@@ -12,7 +12,6 @@
  * available and no-ops in tests/web. Reminders are identified by a stable id
  * so they can be re-scheduled without stacking duplicates.
  */
-
 import * as Notifications from "expo-notifications";
 import { Fatigue } from "../domain/fatigue";
 
@@ -23,7 +22,7 @@ export interface Reminder {
   kind: ReminderKind;
   hour: number; // 0-23
   minute: number; // 0-59
-  weekday?: number; // 1-7 (1=Monday), undefined = every day
+  weekday?: number; // 1-7 (1=Sunday), undefined = every day
   title: string;
   body: string;
 }
@@ -31,7 +30,8 @@ export interface Reminder {
 export const DEFAULT_REMINDERS: Reminder[] = [
   { id: "morning", kind: "morning_routine", hour: 7, minute: 0, title: "Morning routine", body: "Meditate, hydrate, set your goals." },
   { id: "evening", kind: "evening_routine", hour: 21, minute: 30, title: "Evening routine", body: "Review your day, read, wind down." },
-  { id: "weekly", kind: "weekly_summary", hour: 20, minute: 0, weekday: 0, title: "Weekly review", body: "Your weekly summary is ready." },
+  // expo-notifications weekday is 1-7 with 1 = Sunday; 2 = Monday.
+  { id: "weekly", kind: "weekly_summary", hour: 20, minute: 0, weekday: 2, title: "Weekly review", body: "Your weekly summary is ready." },
 ];
 
 /** Request notification permissions. Returns true if granted. */
@@ -44,16 +44,20 @@ export async function requestPermissions(): Promise<boolean> {
   }
 }
 
-/** Schedule a reminder. No-ops gracefully if notifications are unavailable. */
+/**
+ * Schedule a single reminder without touching the others. No-ops gracefully if
+ * notifications are unavailable. Use {@link clearReminders} to wipe the slate first.
+ */
 export async function scheduleReminder(reminder: Reminder): Promise<void> {
   try {
-    await Notifications.cancelAllScheduledNotificationsAsync();
     await Notifications.scheduleNotificationAsync({
       content: { title: reminder.title, body: reminder.body },
       trigger: {
         hour: reminder.hour,
         minute: reminder.minute,
-        weekday: reminder.weekday,
+        // expo-notifications treats `weekday` as always-required on a weekly
+        // trigger (1-7, 1 = Sunday). Omitting it fires every day.
+        ...(reminder.weekday != null ? { weekday: reminder.weekday } : {}),
         repeats: true,
       } as Notifications.WeeklyTriggerInput,
     });
@@ -62,9 +66,23 @@ export async function scheduleReminder(reminder: Reminder): Promise<void> {
   }
 }
 
-/** Schedule the default daily + weekly reminders. */
-export async function scheduleDefaultReminders(): Promise<void> {
-  for (const r of DEFAULT_REMINDERS) {
+/** Cancel every scheduled notification (call before re-scheduling a full set). */
+export async function clearReminders(): Promise<void> {
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  } catch {
+    // Notifications unavailable — silently skip.
+  }
+}
+
+/**
+ * Schedule the default daily + weekly reminders. Clears any existing schedule
+ * first so reminders never stack from repeated calls, then schedules each one
+ * independently so none are dropped.
+ */
+export async function scheduleDefaultReminders(reminders: Reminder[] = DEFAULT_REMINDERS): Promise<void> {
+  await clearReminders();
+  for (const r of reminders) {
     await scheduleReminder(r);
   }
 }

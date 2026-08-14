@@ -22,7 +22,7 @@ export function isoDay(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
-const SCHEMA = `
+export const SCHEMA = `
 CREATE TABLE IF NOT EXISTS checkins (
   id TEXT PRIMARY KEY,
   day TEXT NOT NULL,
@@ -95,13 +95,19 @@ export async function openDatabase(name = "verdant_path.db"): Promise<VerdantDat
   }
 }
 
-/** A minimal in-memory SQL-ish store for environments without SQLite. */
-class InMemoryDatabase implements VerdantDatabase {
+/**
+ * A minimal in-memory SQL-ish store for environments without SQLite. It
+ * understands the small subset of SQL the repositories use: equality and range
+ * WHERE filters, ORDER BY (ASC|DESC), and LIMIT. This keeps web/test parity
+ * with SQLite so the Journal "recent" list and weekly range queries behave
+ * correctly when the native module is unavailable.
+ */
+export class InMemoryDatabase implements VerdantDatabase {
   private tables: Record<string, Map<string, Record<string, unknown>>> = {};
 
   constructor(schema: string) {
     for (const stmt of schema.split(";")) {
-      const match = stmt.match(/CREATE TABLE IF NOT EXISTS (\w+)\s*\(([\s\S]*)\)/i);
+      const match = stmt.match(/CREATE TABLE IF NOT EXISTS (\w+)\s*\([\s\S]*\)/i);
       if (match) {
         const [, name] = match;
         this.tables[name] = new Map();
@@ -152,13 +158,50 @@ class InMemoryDatabase implements VerdantDatabase {
     if (!info) return [];
     const table = this.tables[info.table];
     if (!table) return [];
-    let rows = Array.from(table.values()) as T[];
-    const where = sql.match(/WHERE (\w+)\s*=\s*\?/i);
-    if (where) {
-      const [, col] = where;
-      rows = rows.filter((r) => String((r as Record<string, unknown>)[col]) === String(params[0]));
+    let rows = Array.from(table.values()) as Record<string, unknown>[];
+
+    // Bindings are positional; consume them in the order clauses appear.
+    let p = 0;
+
+    // Equality filters: `col = ?`.
+    for (const m of sql.matchAll(/(\w+)\s*=\s*\?/gi)) {
+      const col = m[1];
+      const v = String(params[p++]);
+      rows = rows.filter((r) => String(r[col]) === v);
     }
-    return rows;
+    // Range filters: `col >= ?` / `col <= ?` (kept in source order).
+    for (const m of sql.matchAll(/(\w+)\s*(>=|<=)\s*\?/gi)) {
+      const col = m[1];
+      const op = m[2];
+      const v = params[p++];
+      rows = rows.filter((r) => {
+        const rv = r[col];
+        if (rv == null) return false;
+        const cmp = String(rv) < String(v) ? -1 : String(rv) > String(v) ? 1 : 0;
+        return op === ">=" ? cmp >= 0 : cmp <= 0;
+      });
+    }
+
+    // ORDER BY col DESC|ASC.
+    const order = sql.match(/ORDER BY (\w+)\s*(DESC|ASC)?/i);
+    if (order) {
+      const [, col, dir] = order;
+      rows.sort((a, b) => {
+        const av = String(a[col] ?? "");
+        const bv = String(b[col] ?? "");
+        const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+        return dir?.toUpperCase() === "DESC" ? -cmp : cmp;
+      });
+    }
+
+    // LIMIT ?.
+    const limit = sql.match(/LIMIT\s*\?/i);
+    if (limit) {
+      const n = Number(params[p++]);
+      if (Number.isFinite(n) && n >= 0) rows = rows.slice(0, n);
+    }
+
+    return rows as T[];
   }
 }
 

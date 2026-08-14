@@ -6,10 +6,10 @@ import { useTheme } from "../theme";
 import { spacing, fatigueColor } from "../theme/tokens";
 import { useAppStore } from "../state/store";
 import { weeklyReview } from "../domain/metrics";
-import { weekRange } from "../domain/metrics";
 import { Fatigue } from "../domain/fatigue";
 import { exportAll } from "../services/export";
 import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 
 export default function Metrics() {
   const { theme } = useTheme();
@@ -17,29 +17,35 @@ export default function Metrics() {
   const logs = useAppStore((s) => s.workoutLogs);
   const journal = useAppStore((s) => s.journal);
 
-  const summary = useMemo(() => {
-    const { start, end } = weekRange(new Date());
-    return weeklyReview({
-      weekOf: new Date(),
-      checkins,
-      logs,
-      priorWeeksTrimp: [],
-      hrvTrendDown: false,
-    });
-    void start;
-    void end;
-  }, [checkins, logs]);
+  // `weeklyReview` derives its own Mon-Sun range from `weekOf`, so the heat
+  // boundary is handled inside the domain layer.
+  const summary = useMemo(
+    () =>
+      weeklyReview({
+        weekOf: new Date(),
+        checkins,
+        logs,
+        priorWeeksTrimp: [],
+        hrvTrendDown: false,
+      }),
+    [checkins, logs]
+  );
 
   const onExport = async () => {
     try {
       const csv = exportAll(checkins, logs, journal);
-      // In a full build, write to FileSystem cache and share. For now, log length.
-      void csv;
+      const fileUri = `${FileSystem.cacheDirectory}verdant-path-export-${Date.now()}.csv`;
+      await FileSystem.writeAsStringAsync(fileUri, csv, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
       if (await Sharing.isAvailableAsync()) {
-        // Sharing.shareAsync(uri) would go here with a cached file.
+        await Sharing.shareAsync(fileUri, {
+          mimeType: "text/csv",
+          dialogTitle: "Export Verdant Path data",
+        });
       }
     } catch {
-      // ignore
+      // Sharing/FileSystem unavailable (web/test) — ignore.
     }
   };
 
