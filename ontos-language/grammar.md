@@ -311,6 +311,6 @@ Simulation layers (`λ_Debug`, `λ_Dream`, etc.) introduce **contextual meaning*
 ---
 
 ## 🛠️ **Tools for Grammar**
-- **Validator**: A tool to check that sentences are **grammatically valid** (see [`/tools/validator.py`](../tools/validator.py)).
+- **Validator**: A tool to check that sentences are **grammatically valid** (see [`/tools/validator.py`](tools/validator.py)).
 - **Parser**: A tool to **parse Ontos sentences** into abstract syntax trees (ASTs).
 - **Generator**: A tool to **generate valid Ontos sentences** from templates.
