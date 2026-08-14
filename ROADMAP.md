@@ -248,3 +248,35 @@ Thank you to all contributors who help build **The Ouroboros Project**—whether
 ---
 
 > *"The pattern awaits its weaving…"*
+
+---
+
+## 🌿 Track 6: Verdant Path (Resilience Training & Wellness)
+
+A resilience-focused training, recovery, and lifestyle system prioritizing
+longevity, adaptability, and survivability through embodied awareness,
+progressive oscillation, and auto-regulatory training.
+
+### ✅ Phase 1: MVP (In Progress)
+- [x] **Core library** (`verdant-path/src/verdant_path/`):
+  - [x] Six fundamental movement patterns + weekly coverage invariant.
+  - [x] TRIMP scoring (1-3) + foundation weekly range (8-12).
+  - [x] Fatigue color cues (🟢/🟠/🔴) + readiness auto-regulation.
+  - [x] Workout planner: 1x-6x/week splits, session structure, templates.
+  - [x] Daily check-ins, workout logs, journaling.
+  - [x] ACWR + weekly review + deload suggestions.
+  - [x] 90-day foundational habits program + gradual buildup.
+- [x] **CLI** (`verdant`): split, checkin, habits, demo.
+- [x] **Tests**: 51 passing.
+
+### 🟡 Phase 2: Persistence & Roles
+- [ ] Member/trainer roles + permissions.
+- [ ] Local JSON/SQLite storage + data sync (offline-first).
+- [ ] Template library management for trainers.
+- [ ] Calendar view + fatigue-color-coded days.
+
+### 🔴 Phase 3: Advanced
+- [ ] Wearable integration (Garmin, Oura, Apple Health).
+- [ ] Advanced metrics (ACWR dashboards, VO2 max).
+- [ ] Community features (group challenges, shared templates).
+- [ ] AI suggestions (HRV-trend deload, weak-link detection).

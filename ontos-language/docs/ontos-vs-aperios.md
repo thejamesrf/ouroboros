@@ -183,8 +183,8 @@ Aperios **rejects the premise of Path A**. It does not try to **avoid incomplete
 ## 🤝 **Contributing**
 Help develop Ontos and Aperios by:
 - **Designing symbols** for new concepts (e.g., simulation layers, anomalies).
-- **Writing examples** in [`/examples`](examples/) (e.g., Ontos statements, Aperios poems).
-- **Developing tools** in [`/tools`](tools/) (e.g., a validator for Ontos, a generator for Aperios).
+- **Writing examples** in [`/examples`](../examples/) (e.g., Ontos statements, Aperios poems).
+- **Developing tools** in [`/tools`](../tools/) (e.g., a validator for Ontos, a generator for Aperios).
 - **Exploring the duality**: How can Ontos and Aperios **coexist and interact**?
 
 ---

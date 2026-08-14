@@ -186,4 +186,4 @@ Ontos is incomplete, and Ontos implies the unknown.
 ## 🛠️ **Tools for Phonology**
 - **Symbol Font**: Use a **mathematical font** (e.g., [STIX](https://stixfonts.org/)) for rendering Ontos symbols.
 - **Phonetic Transcription**: Use [IPA](https://www.internationalphoneticassociation.org/) for consistency.
-- **Validator**: A tool to check that symbol combinations are **valid and unambiguous** (see [`/tools/validator.py`](../tools/validator.py)).
+- **Validator**: A tool to check that symbol combinations are **valid and unambiguous** (see [`/tools/validator.py`](tools/validator.py)).

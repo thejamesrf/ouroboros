@@ -35,6 +35,7 @@ Our first and primary project is **Hidden Gods**, a **Powered by the Apocalypse 
 | **Anomaly Forge**| Python Tool        | Generates anomalies, archetypes, and layers for Hidden Gods.              | 🟢 Planned   | `/src`             |
 | **Simulation Bible** | Lore/Markdown  | Shared world-building bible for nested layers, gods, and rules.           | 🟢 Planned   | [`/docs`](docs/)   |
 | **Ouroboros CLI**| Python CLI         | Command-line tool for generating and managing simulation assets.          | 🔴 Idea      | *(Future)*         |
+| **Verdant Path** | Python library + CLI | Resilience-focused training, recovery & wellness system (TRIMP, fatigue cues, 90-day habits). | 🟢 Active     | [`/verdant-path`](verdant-path/) |
 
 ---
 
@@ -69,6 +70,10 @@ ouroboros/
 ├── src/                  # Shared code/tools (e.g., Anomaly Forge)
 │   ├── anomalies.py
 │   └── simulation.py
+├── verdant-path/         # Verdant Path training & wellness system
+│   ├── src/verdant_path/ # Core library (fatigue, TRIMP, planner, habits)
+│   ├── tests/            # pytest suite
+│   └── examples/         # Sample programs
 ├── docs/                 # Shared documentation (Simulation Bible, etc.)
 │   ├── lore/
 │   └── mechanics/
