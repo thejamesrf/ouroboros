@@ -204,7 +204,7 @@ Focus on **completing Phase 1 for Hidden Gods** and **starting Phase 2 for Ontos
   - Fluid, **context-dependent symbols**.
 
 ### **Tools**
-- [ ] **Anomaly Forge** (`src/anomalies.py`):
+- [x] **Anomaly Forge** (`src/ouroboros/anomalies.py`, standalone `examples/anomaly_forge_standalone.py`):
   - Generates **random anomalies** for Hidden Gods.
 
 ---
