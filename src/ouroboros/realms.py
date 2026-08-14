@@ -14,6 +14,33 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from enum import Enum
+
+
+class TimeFrame(Enum):
+    """Known simulation time-frames.
+
+    Free-form strings are still accepted by the loader (the Ouroboros lore is
+    open-ended), but known values round-trip through this enum so typos like
+    ``"Outsude"`` are caught at load time when a caller opts in.
+    """
+
+    OUTSIDE = "Outside"
+
+    @classmethod
+    def coerce(cls, value: object) -> "TimeFrame | str":
+        """Return the matching enum member, or the original string if unknown."""
+
+        if isinstance(value, cls):
+            return value
+        s = str(value)
+        for member in cls:
+            if member.value == s:
+                return member
+        return s
+
+    def __str__(self) -> str:
+        return self.value
 
 # --------------------------------------------------------------------------- #
 # Dataclasses — one per section of the realm record.
@@ -74,9 +101,22 @@ class Realm:
     environment: Environment
 
     def to_json(self, indent: int = 2) -> str:
-        """Serialize back to the canonical JSON form."""
+        """Serialize back to the canonical JSON form.
 
-        return json.dumps(asdict(self), indent=indent, ensure_ascii=False)
+        Enum-valued fields (e.g. ``time_frame``) serialize as their string
+        value so the round-trip matches the original JSON.
+        """
+
+        def _strip_enums(obj):
+            if isinstance(obj, Enum):
+                return obj.value
+            if isinstance(obj, dict):
+                return {k: _strip_enums(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [_strip_enums(v) for v in obj]
+            return obj
+
+        return json.dumps(_strip_enums(asdict(self)), indent=indent, ensure_ascii=False)
 
 
 # --------------------------------------------------------------------------- #
@@ -159,7 +199,7 @@ def load_realm_dict(data: dict) -> Realm:
     return Realm(
         name=str(data["name"]),
         type=str(data["type"]),
-        time_frame=str(data["time_frame"]),
+        time_frame=TimeFrame.coerce(data["time_frame"]),
         location=Location(realm=str(loc["realm"]), coordinates=str(loc["coordinates"])),
         population=str(data["population"]),
         dimensions=str(data["dimensions"]),
@@ -192,3 +232,12 @@ def load_realm(path: str | Path) -> Realm:
 
     text = Path(path).read_text(encoding="utf-8")
     return load_realm_dict(json.loads(text))
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 2:
+        print(canonical_realm())
+    else:
+        print(load_realm(sys.argv[1]))
+
