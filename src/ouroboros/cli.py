@@ -16,7 +16,7 @@ import sys
 from ouroboros.anomalies import LAYERS, generate_batch, canonical_anomaly
 from ouroboros.ontos import GOLDEN_CASES, generate_statement, validate_statement
 from ouroboros.realms import canonical_realm
-from ouroboros.translate import translate_to_english
+from ouroboros.translate import translate_from_english, translate_to_english, summarize_story
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
@@ -115,6 +115,30 @@ def cmd_demo(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_translate_from(args: argparse.Namespace) -> int:
+    """Translate an English sentence into a best-effort Ontos statement."""
+
+    out = translate_from_english(args.text)
+    print(out)
+    if out:
+        result = validate_statement(out)
+        print(f"  -> {'valid' if result else 'invalid'}")
+    return 0
+
+
+def cmd_navigator(args: argparse.Namespace) -> int:
+    """Summarize a story into Ontos statements + a Navigator report."""
+
+    if args.file:
+        from pathlib import Path
+        text = Path(args.file).read_text(encoding="utf-8")
+    else:
+        text = args.text
+    nav = summarize_story(text)
+    print(nav.render())
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="ouroboros",
@@ -132,6 +156,15 @@ def build_parser() -> argparse.ArgumentParser:
     t = sub.add_parser("translate", help="Gloss an Ontos statement into English.")
     t.add_argument("statement", help="the Ontos statement to translate")
     t.set_defaults(func=cmd_translate)
+
+    tf = sub.add_parser("translate-from", help="Translate an English sentence into Ontos.")
+    tf.add_argument("text", help="the English sentence")
+    tf.set_defaults(func=cmd_translate_from)
+
+    nv = sub.add_parser("navigator", help="Summarize a story into Ontos + a Navigator report.")
+    nv.add_argument("text", nargs="?", default=None, help="the story text")
+    nv.add_argument("--file", "-f", default=None, help="read story from a file")
+    nv.set_defaults(func=cmd_navigator)
 
     a = sub.add_parser("anomaly", help="Forge anomalies for a Hidden Gods session.")
     a.add_argument("--layer", default=None, help=f"layer name: {list(LAYERS)}")
