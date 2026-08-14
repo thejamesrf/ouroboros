@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+
+# Native builds
+ios/
+android/
+
+# Environment
+.env
+.env.local
+
+# Tests
+coverage/
