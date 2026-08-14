@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🜲 Ouroboros Tools — Live Demo</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #c9d1d9;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  header h1 { margin: 0; font-size: 1.6rem; }
+  header p { margin: 0.3rem 0 0; color: var(--muted); font-size: 0.9rem; }
+  main { max-width: 920px; margin: 0 auto; padding: 1.5rem; }
+  .tabs {
+    display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .tab {
+    padding: 0.5rem 1rem; cursor: pointer; border: none; background: none;
+    color: var(--muted); font-size: 0.95rem; border-bottom: 2px solid transparent;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .field { margin-bottom: 1rem; }
+  label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.3rem; }
+  input[type=text], select {
+    width: 100%; padding: 0.6rem; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px; font-family: monospace;
+    font-size: 0.95rem;
+  }
+  button {
+    padding: 0.55rem 1.2rem; background: var(--accent); color: #fff; border: none;
+    border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: 600;
+  }
+  button:hover { filter: brightness(1.1); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  pre {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 6px;
+    padding: 1rem; overflow-x: auto; font-size: 0.85rem; min-height: 3rem;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .status {
+    font-size: 0.85rem; padding: 0.5rem 0.75rem; border-radius: 6px;
+    margin-bottom: 1rem; display: none;
+  }
+  .status.show { display: block; }
+  .status.loading { background: #1f2937; color: var(--accent); }
+  .status.error { background: #3b1414; color: var(--red); }
+  .status.ready { background: #143b1f; color: var(--green); }
+  .row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+  .row .field { flex: 1; min-width: 140px; }
+  .badge-g { color: var(--green); }
+  .badge-r { color: var(--red); }
+  .hint { font-size: 0.8rem; color: var(--muted); margin-top: 0.3rem; }
+  footer { text-align: center; padding: 2rem; color: var(--muted); font-size: 0.8rem; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🜲 Ouroboros Tools — Live Demo</h1>
+  <p>Validate Ontos · Translate to English · Forge Anomalies · Explore Realms — all in your browser, no install.</p>
+</header>
+
+<main>
+  <div id="status" class="status loading show">⏳ Loading Python (Pyodide ~6MB)… first load takes a moment.</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="validate">🟣 Ontos Validator</button>
+    <button class="tab" data-tab="translate">🟢 Translator</button>
+    <button class="tab" data-tab="anomaly">🟢 Anomaly Forge</button>
+    <button class="tab" data-tab="realm">🟣 Realm Viewer</button>
+    <button class="tab" data-tab="golden">✅ Golden Cases</button>
+  </div>
+
+  <!-- Validator -->
+  <div id="validate" class="panel active">
+    <div class="field">
+      <label for="v-input">Ontos statement</label>
+      <input type="text" id="v-input" value="(A ∧ B) → C" />
+      <div class="hint">Try: <code>A ∧ B → C</code> (invalid, needs parens) · <code>⍶(A) = A</code> (marked self-ref) · <code>∀x (x ∈ λ_Debug)</code></div>
+    </div>
+    <button id="v-run" disabled>Validate</button>
+    <h4 style="margin-top:1.25rem;">Result</h4>
+    <pre id="v-out">—</pre>
+  </div>
+
+  <!-- Translator -->
+  <div id="translate" class="panel">
+    <div class="field">
+      <label for="t-input">Ontos statement to gloss</label>
+      <input type="text" id="t-input" value="[λ_Debug] (𝒫_Alice → (⚡_EchoingDoor → (𝒢_Architect → ⚡_NewAnomaly)))" />
+      <div class="hint">Translates Ontos symbols into English using the phonology.md tables.</div>
+    </div>
+    <button id="t-run" disabled>Translate</button>
+    <h4 style="margin-top:1.25rem;">English gloss</h4>
+    <pre id="t-out">—</pre>
+  </div>
+
+  <!-- Anomaly Forge -->
+  <div id="anomaly" class="panel">
+    <div class="row">
+      <div class="field">
+        <label for="a-layer">Layer</label>
+        <select id="a-layer">
+          <option value="">(any)</option>
+          <option value="Base Reality">Base Reality</option>
+          <option value="Debug" selected>Debug</option>
+          <option value="Dream">Dream</option>
+          <option value="Machine">Machine</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="a-count">Count</label>
+        <input type="text" id="a-count" value="1" style="font-family:inherit;" />
+      </div>
+      <div class="field">
+        <label for="a-seed">Seed (optional)</label>
+        <input type="text" id="a-seed" value="7" style="font-family:inherit;" />
+      </div>
+      <button id="a-run" disabled>Forge</button>
+    </div>
+    <h4 style="margin-top:1.25rem;">Forged anomalies</h4>
+    <pre id="a-out">—</pre>
+  </div>
+
+  <!-- Realm Viewer -->
+  <div id="realm" class="panel">
+    <button id="r-run" disabled>Show the Labyrinth of Eternity</button>
+    <h4 style="margin-top:1.25rem;">Realm record (JSON)</h4>
+    <pre id="r-out">—</pre>
+  </div>
+
+  <!-- Golden Cases -->
+  <div id="golden" class="panel">
+    <button id="g-run" disabled>Run all 18 golden cases</button>
+    <h4 style="margin-top:1.25rem;">Results</h4>
+    <pre id="g-out">—</pre>
+  </div>
+</main>
+
+<footer>
+  Powered by <a href="https://pyodide.org" target="_blank" rel="noopener">Pyodide</a> (CPython in WebAssembly).
+  Source: <a href="https://github.com/thejamesrf/ouroboros" target="_blank" rel="noopener">thejamesrf/ouroboros</a>.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+<script>
+const SOURCES = {
+  "ouroboros/__init__.py": "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/__init__.py",
+  "ouroboros/ontos.py":     "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/ontos.py",
+  "ouroboros/translate.py": "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/translate.py",
+  "ouroboros/anomalies.py":"https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/anomalies.py",
+  "ouroboros/realms.py":   "https://raw.githubusercontent.com/thejamesrf/ouroboros/vibe/ouroboros-tools-a9a7cc/src/ouroboros/realms.py",
+};
+
+let pyodideReady = false;
+const statusEl = document.getElementById("status");
+
+async function init() {
+  try {
+    const pyodide = await loadPyodide();
+    statusEl.textContent = "⏳ Fetching Ouroboros source…";
+    // Fetch each module and write it into Pyodide's virtual filesystem.
+    for (const [path, url] of Object.entries(SOURCES)) {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${path}`);
+      const code = await resp.text();
+      pyodide.FS.writeFile(path, code);
+    }
+    // Import the package.
+    await pyodide.runPythonAsync(`
+import sys
+sys.path.insert(0, ".")
+import importlib
+import ouroboros
+from ouroboros import ontos, translate, anomalies, realms
+importlib.reload(ouroboros)
+`);
+    statusEl.textContent = "✅ Python ready. Pick a tab and run a tool.";
+    statusEl.className = "status ready show";
+    pyodideReady = true;
+    document.querySelectorAll("button[id$='-run']").forEach(b => b.disabled = false);
+    window._py = pyodide;
+  } catch (err) {
+    statusEl.textContent = "❌ " + err.message;
+    statusEl.className = "status error show";
+  }
+}
+
+// Tab switching.
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    document.getElementById(tab.dataset.tab).classList.add("active");
+  });
+});
+
+function py(fn) {
+  return window._py.runPython(fn);
+}
+
+// Validator.
+document.getElementById("v-run").addEventListener("click", () => {
+  const stmt = document.getElementById("v-input").value;
+  const out = py(`r = ontos.validate_statement(${JSON.stringify(stmt)})
+"\n".join([f"{'VALID' if r.valid else 'INVALID'}  " + ${JSON.stringify(stmt)}] + [f"[{e.rule}] {e.message}" for e in r.errors])`);
+  document.getElementById("v-out").textContent = out || "(no output)";
+});
+
+// Translator.
+document.getElementById("t-run").addEventListener("click", () => {
+  const stmt = document.getElementById("t-input").value;
+  const out = py(`translate.translate_to_english(${JSON.stringify(stmt)})`);
+  document.getElementById("t-out").textContent = out || "(no output)";
+});
+
+// Anomaly forge.
+document.getElementById("a-run").addEventListener("click", () => {
+  const layer = document.getElementById("a-layer").value || null;
+  const count = parseInt(document.getElementById("a-count").value || "1", 10);
+  const seedRaw = document.getElementById("a-seed").value.trim();
+  const seed = seedRaw ? parseInt(seedRaw, 10) : null;
+  const layerPy = layer ? JSON.stringify(layer) : "None";
+  const out = py(`anomalies.generate_batch(${count}, layer=${layerPy}, seed=${seed if seed !== null else "None"})
+# render each
+"\\n".join(a.render() for a in _)` );
+  document.getElementById("a-out").textContent = out || "(no output)";
+});
+
+// Realm viewer.
+document.getElementById("r-run").addEventListener("click", () => {
+  const out = py(`realms.canonical_realm().to_json()`);
+  document.getElementById("r-out").textContent = out;
+});
+
+// Golden cases.
+document.getElementById("g-run").addEventListener("click", () => {
+  const out = py(`
+lines = []
+fails = 0
+for stmt, expected in ontos.GOLDEN_CASES.items():
+    r = ontos.validate_statement(stmt)
+    ok = r.valid == expected
+    mark = "✅" if ok else "❌"
+    lines.append(f"{mark} expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
+    if not ok:
+        fails += 1
+        for e in r.errors:
+            lines.append(f"     [{e.rule}] {e.message}")
+lines.append(f"\\n{len(ontos.GOLDEN_CASES)-fails}/{len(ontos.GOLDEN_CASES)} golden cases passed")
+"\\n".join(lines)`);
+  document.getElementById("g-out").textContent = out;
+});
+
+init();
+</script>
+</body>
+</html>
