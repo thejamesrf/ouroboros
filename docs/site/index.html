@@ -64,7 +64,7 @@
   <div id="status" class="status loading show">⏳ Loading Python (Pyodide ~6MB)… first load takes a moment.</div>
 
   <div class="tabs">
-    <button class="tab active" data-tab="navigator">🧭 Story Navigator</button>
+    <button class="tab active" data-tab="navigator">🜲 Three-Level Translator</button>
     <button class="tab" data-tab="validate">🟣 Ontos Validator</button>
     <button class="tab" data-tab="translate">🟢 Translator</button>
     <button class="tab" data-tab="anomaly">🟢 Anomaly Forge</button>
@@ -78,9 +78,13 @@
     <div class="field">
       <label for="nav-input">Paste a story summary, session recap, or lore fragment</label>
       <textarea id="nav-input">Alice enters the Debug layer. She triggers the Echoing Door, which repeats the last 3 seconds of sound. The anomaly reveals the Architect, who creates a new glitch. The Debugger awakens.</textarea>
-      <div class="hint">The Navigator extracts actors, layers, and anomalies from your prose and emits valid Ontos statements.</div>
+      <div class="hint">Renders your story at three depths: <b>Level 1</b> (pure Ontos), <b>Level 2</b> (Quill — fragmented English straining toward precision), <b>Level 3</b> (Poetic English, root Aperios). All three describe the same event.</div>
     </div>
-    <button id="nav-run" disabled>Generate Ontos/Navigator output</button>
+    <div class="row" style="margin-bottom:1rem;">
+      <div class="field"><label for="nav-seed">Seed (optional)</label>
+        <input type="text" id="nav-seed" value="7" /></div>
+      <button id="nav-run" disabled>Generate three-level output</button>
+    </div>
     <h4 style="margin-top:1.25rem;">Navigator output</h4>
     <pre id="nav-out">—</pre>
   </div>
@@ -225,6 +229,7 @@ const SOURCES = {
   "verdant_path/planner.py":  `${RAW}/verdant-path/src/verdant_path/planner.py`,
   "verdant_path/metrics.py":  `${RAW}/verdant-path/src/verdant_path/metrics.py`,
   "verdant_path/session.py":  `${RAW}/verdant-path/src/verdant_path/session.py`,
+  "ouroboros/narrator.py": `${RAW}/src/ouroboros/narrator.py`,
 };
 
 const statusEl = document.getElementById("status");
@@ -272,7 +277,7 @@ async function init() {
 import sys
 sys.path.insert(0, ".")
 import ouroboros
-from ouroboros import ontos, translate, anomalies, realms
+from ouroboros import ontos, translate, anomalies, realms, narrator
 import verdant_path
 from verdant_path import fatigue, trimp
 
@@ -295,6 +300,9 @@ def _translate_from(text):
 
 def _navigator(text):
     return translate.summarize_story(text).render()
+
+def _three_levels(text, seed):
+    return narrator.translate_three_levels(text, seed=seed).render()
 
 def _anomalies(layer, count, seed):
     batch = anomalies.generate_batch(count, layer=layer if layer else None, seed=seed)
@@ -403,11 +411,19 @@ function callStr(fnName, arg) {
   return window._py.runPython(`${fnName}(_arg)`);
 }
 
-// Story Navigator.
+// Story Navigator (three-level translation).
 document.getElementById("nav-run").addEventListener("click", () => {
-  const text = document.getElementById("nav-input").value;
-  const out = callStr("_navigator", text);
-  document.getElementById("nav-out").textContent = out || "(no output)";
+  try {
+    const text = document.getElementById("nav-input").value;
+    const seedRaw = document.getElementById("nav-seed").value.trim();
+    const seed = seedRaw ? parseInt(seedRaw, 10) : 7;
+    window._py.globals.set("_text", text);
+    window._py.globals.set("_seed", seed);
+    const out = window._py.runPython(`_three_levels(_text, _seed)`);
+    document.getElementById("nav-out").textContent = out || "(no output)";
+  } catch (err) {
+    document.getElementById("nav-out").textContent = "❌ " + errMsg(err);
+  }
 });
 
 // Validator.
