@@ -257,6 +257,13 @@ async function init() {
         throw new Error(`Network error fetching ${path}: ${errMsg(fetchErr)} (url: ${url})`);
       }
       if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${path} (url: ${url})`);
+      // Create parent directories before writing — Pyodide's FS.writeFile
+      // does not auto-create dirs and throws ErrnoError 44 if they're missing.
+      const parts = path.split("/");
+      for (let i = 1; i < parts.length; i++) {
+        const dir = parts.slice(0, i).join("/");
+        try { pyodide.FS.mkdir(dir); } catch (_) { /* already exists */ }
+      }
       pyodide.FS.writeFile(path, await resp.text());
     }
 
