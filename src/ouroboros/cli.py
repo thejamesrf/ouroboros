@@ -17,6 +17,7 @@ from ouroboros.anomalies import LAYERS, generate_batch, canonical_anomaly
 from ouroboros.ontos import GOLDEN_CASES, generate_statement, validate_statement
 from ouroboros.realms import canonical_realm
 from ouroboros.translate import translate_from_english, translate_to_english, summarize_story
+from ouroboros.narrator import translate_three_levels
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
@@ -139,6 +140,19 @@ def cmd_navigator(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_three_levels(args: argparse.Namespace) -> int:
+    """Render a story at all three depths: Ontos, Quill, and Poetic."""
+
+    if args.file:
+        from pathlib import Path
+        text = Path(args.file).read_text(encoding="utf-8")
+    else:
+        text = args.text
+    result = translate_three_levels(text, seed=args.seed)
+    print(result.render())
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="ouroboros",
@@ -165,6 +179,12 @@ def build_parser() -> argparse.ArgumentParser:
     nv.add_argument("text", nargs="?", default=None, help="the story text")
     nv.add_argument("--file", "-f", default=None, help="read story from a file")
     nv.set_defaults(func=cmd_navigator)
+
+    tl = sub.add_parser("three-levels", help="Render a story at three depths: Ontos, Quill, Poetic.")
+    tl.add_argument("text", nargs="?", default=None, help="the story text")
+    tl.add_argument("--file", "-f", default=None, help="read story from a file")
+    tl.add_argument("--seed", type=int, default=None, help="seed for reproducibility")
+    tl.set_defaults(func=cmd_three_levels)
 
     a = sub.add_parser("anomaly", help="Forge anomalies for a Hidden Gods session.")
     a.add_argument("--layer", default=None, help=f"layer name: {list(LAYERS)}")
