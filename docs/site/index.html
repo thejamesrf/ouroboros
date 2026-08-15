@@ -229,15 +229,38 @@ const SOURCES = {
 
 const statusEl = document.getElementById("status");
 
+function errMsg(e) {
+  // Extract a useful message from any error shape: Pyodide PythonError,
+  // fetch rejection, plain object, or string.
+  if (!e) return String(e);
+  if (typeof e === "string") return e;
+  if (e.message) return e.message;
+  if (e.toString && e.toString() !== "[object Object]") return e.toString();
+  try { return JSON.stringify(e); } catch (_) { return String(e); }
+}
+
 async function init() {
+  const enableButtons = () => {
+    document.querySelectorAll("button[id$='-run']").forEach(b => b.disabled = false);
+  };
   try {
+    statusEl.textContent = "\u23f3 Loading Python (Pyodide ~6MB)\u2026";
     const pyodide = await loadPyodide();
-    statusEl.textContent = "⏳ Fetching Ouroboros + Verdant Path source…";
+    window._py = pyodide;
+
+    statusEl.textContent = "\u23f3 Fetching Ouroboros + Verdant Path source\u2026";
     for (const [path, url] of Object.entries(SOURCES)) {
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${path}`);
+      let resp;
+      try {
+        resp = await fetch(url);
+      } catch (fetchErr) {
+        throw new Error(`Network error fetching ${path}: ${errMsg(fetchErr)} (url: ${url})`);
+      }
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} fetching ${path} (url: ${url})`);
       pyodide.FS.writeFile(path, await resp.text());
     }
+
+    statusEl.textContent = "\u23f3 Importing packages\u2026";
     await pyodide.runPythonAsync(`
 import sys
 sys.path.insert(0, ".")
@@ -246,9 +269,6 @@ from ouroboros import ontos, translate, anomalies, realms
 import verdant_path
 from verdant_path import fatigue, trimp
 
-# Define helper functions that take a single string arg and return a string.
-# This avoids fragile string-interpolation: we set the arg via globals, then
-# call the helper. runPython returns the last expression's value.
 def _validate(stmt):
     r = ontos.validate_statement(stmt)
     lines = ["VALID" if r.valid else "INVALID", stmt]
@@ -282,7 +302,7 @@ def _golden():
     for stmt, expected in ontos.GOLDEN_CASES.items():
         r = ontos.validate_statement(stmt)
         ok = r.valid == expected
-        lines.append(("✅" if ok else "❌") + f" expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
+        lines.append(("\u2705" if ok else "\u274c") + f" expected={'valid' if expected else 'invalid'} got={'valid' if r.valid else 'invalid':>7}  {stmt}")
         if not ok:
             fails += 1
             for e in r.errors:
@@ -293,9 +313,9 @@ def _golden():
 def _checkin(energy, mood, soreness, sleep, hrv, hrvb):
     pct = fatigue.fatigue_from_checkin(energy, mood, soreness, sleep, hrv, hrv_baseline=hrvb)
     cue = fatigue.fatigue_cue(pct)
-    adj = readiness_adjustment = fatigue.readiness_adjustment(pct)
+    adj = fatigue.readiness_adjustment(pct)
     bar_w = int(round(pct / 100 * 20))
-    bar = "[" + "█" * bar_w + "·" * (20 - bar_w) + f"] {pct:.1f}%"
+    bar = "[" + "\u2588" * bar_w + "\u00b7" * (20 - bar_w) + f"] {pct:.1f}%"
     lines = [
         f"Energy={energy}/5  Mood={mood}/5  Soreness={soreness}/5",
         f"Sleep={sleep}h  HRV={hrv}ms (baseline {hrvb})",
@@ -317,15 +337,26 @@ def _trimp(lo, med, hi):
     total = trimp.weekly_trimp(levels)
     return f"{total} TRIMP  ->  {trimp.weekly_trimp_status(total)}"
 `);
-    statusEl.textContent = "✅ Python ready. Pick a tab and run a tool.";
+
+    statusEl.textContent = "\u2705 Python ready. Pick a tab and run a tool.";
     statusEl.className = "status ready show";
-    document.querySelectorAll("button[id$='-run']").forEach(b => b.disabled = false);
-    window._py = pyodide;
   } catch (err) {
-    const msg = (err && err.message) ? err.message : String(err);
-    statusEl.textContent = "❌ " + msg;
+    const msg = errMsg(err);
+    statusEl.innerHTML = "\u274c " + msg + "<br><br><small>Check the browser console (F12 \u2192 Console) for the full error. The tools need Pyodide to load; if your network blocks it, try a different connection.</small>";
     statusEl.className = "status error show";
-    console.error(err);
+    console.error("init error:", err);
+  } finally {
+    // ALWAYS enable buttons so the user isn't stuck, even if init failed.
+    // If Pyodide didn't load, clicking a button will show a clear error.
+    enableButtons();
+    if (!window._py) {
+      // Pyodide never loaded — wire buttons to show a helpful message.
+      document.querySelectorAll("button[id$='-run']").forEach(b => {
+        b.addEventListener("click", () => {
+          alert("Python (Pyodide) failed to load. See the error message at the top of the page. Check the browser console (F12) for details.");
+        });
+      });
+    }
   }
 }
 
